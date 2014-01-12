@@ -1,7 +1,7 @@
 DEBUG =
 {
-   INVINCIBLE: false,
-   COLLISIONRADIUS: false,
-   DISABLEGLOWEFFECT: false,
-   FPS: false
+    INVINCIBLE: false,
+    COLLISIONRADIUS: false,
+    DISABLEGLOWEFFECT: false,
+    FPS: false
 };
