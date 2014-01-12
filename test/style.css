@@ -1,0 +1,15 @@
+body{
+    margin: 0px;
+}
+#game{
+    display: block;
+    margin: 0 auto ;
+    /*width: 640px;
+    height: 480px;*/
+}
+#controls{
+    position: absolute;
+    bottom: 0px;
+    color: white;
+    font-family: Arial;
+}
