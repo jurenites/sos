@@ -87,7 +87,7 @@
     extend(Arena.Bullet, Game.EffectActor,
         {
             BULLET_RADIUS: 12,
-            BULLET_LIFESPAN: 750,
+            BULLET_LIFESPAN: 2750,
             FADE_LENGTH: 125,
 
             /**

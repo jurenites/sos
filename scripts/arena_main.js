@@ -1,18 +1,11 @@
 /**
- * Arena5 HTML5 canvas game.
- *
- * (C) 2010/2011 Kevin Roast kevtoast@yahoo.com @kevinroast
- *
- * Please see: license.txt
- * You are welcome to use this code, but I would appreciate an email or tweet
- * if you do anything interesting with it!
+ * SOS game
+ * 2013 Alexander ILivanov jurenites@gmail.com
  */
-
 
 // Globals
 var DEBUG = false;
-var SCOREDBKEY = "arena5-score-1.1";
-
+var SCOREDBKEY = "sos 0.1";
 
 // bind to window events
 window.addEventListener('load', onloadHandler, false);
@@ -63,7 +56,7 @@ Arena.Colours =
 {
     // NOTE: K3D object colours still defined as [r,g,b] triple
     PLAYER: "rgb(255,255,255)",
-    PLAYER_THRUST: "rgb(25,125,255)",
+    PLAYER_THRUST: "rgb(255,255,255)",
     PARTICLE: "rgb(255,150,75)",
     EXPLOSION: "rgb(255,120,40)",
     ENEMY_DUMBO: "rgb(0,128,255)",
@@ -224,26 +217,27 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
         // scene renderers
         // display welcome text, info text and high scores
         this.sceneRenderers = [];
-        var offx = GameHandler.width / 2 - 100,
-            offy = GameHandler.height / 2 - 5;
+        //var offx = GameHandler.width / 2 - 100,
+        //   offy = GameHandler.height / 2 - 5;
         this.sceneRenderers.push(this.sceneRendererInfo);
         this.sceneRenderers.push(this.sceneRendererWelcome);
 
         // perform prerender steps - create some bitmap graphics to use later
         var me = this;
         var firstCallback = true;
-        GameHandler.bitmaps = new Arena.Prerenderer();
+        GameHandler.bitmaps = new Arena.Prerenderer(game.player);
         GameHandler.bitmaps.execute(
             function (percentComplete) {
                 var ctx = GameHandler.canvas.getContext('2d');
                 var offx = GameHandler.width / 2 - 100,
                     offy = GameHandler.height / 2 - 5;
+
                 ctx.fillRect(offx, offy, percentComplete * 2, 8);
                 if (firstCallback) {
                     ctx.fillStyle = "#fff";
                     ctx.strokeStyle = "#aaa";
                     ctx.strokeRect(offx + 0.5, offy + 0.5, 202, 8);
-                    Game.fillText(ctx, "Loading...", "8pt Courier New", offx, offy - 6, "lightgrey");
+                    //Game.fillText(ctx, "Loading...", '10pt ', offx, offy - 6, "rgba(255,255,255,255")
 
                     firstCallback = false;
                 }
@@ -326,7 +320,6 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
                     this.currentSceneFrame = 0;
                 }
                 //frame log
-                //console.log(this.currentSceneFrame);
                 ctx.save();
                 // fade in/out
                 if (this.currentSceneFrame < this.SCENE_FADE) {
@@ -343,13 +336,12 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
             },
 
             sceneRendererWelcome: function sceneRendererWelcome(ctx) {
-                // TODO: fix scale of text relative to playfield size not world scale...
                 if (this.currentSceneRenderer == 1) {
                     this.fadeRGB = 1;
                 }
                 var colour = "rgba(255,255,255," + this.fadeRGB + ")";
                 ff = '10pt "4pixel"';
-                Game.centerFillText(ctx, "SPACE or click to start", ff, GameHandler.height * 0.5 + 12, colour);
+                Game.centerFillText(ctx, "click [ SPACE ]  or [ MOUSE 1 ]", ff, GameHandler.height * 0.5 + 12, colour);
             },
 
             sceneRendererInfo: function sceneRendererInfo(ctx) {
@@ -455,7 +447,7 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
                     }
                 }
                 if (interval.framecounter < 200) {
-                    Game.centerFillText(ctx, interval.label, Game.fontFamily(this.world, 18), GameHandler.height * 0.5 - 9, "white");
+                    //Game.centerFillText(ctx, interval.label, Game.fontFamily(this.world, 18), GameHandler.height * 0.5 - 9, "white");
                     Game.centerFillText(ctx, "Score: " + this.game.lastscore, Game.fontFamily(this.world, 14), GameHandler.height * 0.5 + 32, "white");
                     if (this.game.lastscore === this.game.highscore) {
                         Game.centerFillText(ctx, "New High Score!", Game.fontFamily(this.world, 14), GameHandler.height * 0.5 + 64, "white");
@@ -505,7 +497,6 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
                     position.x = position.y = this.world.size / 2;
                     vector.x = vector.y = heading = 0;
                 }
-
                 // start view centered in the game world
                 this.world.viewx = this.world.viewy = (this.world.size / 2) - (this.world.viewsize / 2);
             },
@@ -870,6 +861,8 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
              */
             scoredisplay: 0,
 
+            controlFire: null,
+
             /**
              * Scene init event handler
              */
@@ -926,18 +919,6 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
                 var p = this.player,
                     w = this.world;
 
-                // upgrade weapon powerup based enemy killed count
-                if (this.game.score > 10000 && p.primaryWeapons["main"].bulletCount === 1) {
-                    p.primaryWeapons["main"].bulletCount = 2;
-                    this.effects.push(new Arena.TextIndicator(
-                        this.screenCenterVector(), new Vector(0, -3.5), "POWERUP X1!", 32, "white", 1500));
-                }
-                if (this.game.score > 50000 && p.primaryWeapons["main"].bulletCount === 2) {
-                    p.primaryWeapons["main"].bulletCount = 3;
-                    this.effects.push(new Arena.TextIndicator(
-                        this.screenCenterVector(), new Vector(0, -3.5), "POWERUP X2!", 32, "white", 1500));
-                }
-
                 // player handle input - rotate and move
                 p.handleInput(this.input);
 
@@ -946,7 +927,7 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
                 this.updateActors();
 
                 // auto-fire in direction of mouse or axis fire
-                if (!(DEBUG && DEBUG.DISABLEAUTOFIRE || this.game.disableAutofire) || this.input.axisFire) {
+                if ((!(DEBUG && DEBUG.DISABLEAUTOFIRE || this.game.disableAutofire) || this.input.axisFire) && this.controlFire) {
                     var v, h;
                     if (this.input.axisFire) {
                         // axis fire is already a normalised vector
@@ -979,14 +960,9 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
 
                 // TODO: click to fire secondary weapons?
 
-                // update view position based on new player position
-                var viewedge = w.viewsize * 0.2;
-                if (p.position.x > viewedge && p.position.x < w.size - viewedge) {
-                    w.viewx = p.position.x - w.viewsize * 0.5;
-                }
-                if (p.position.y > viewedge && p.position.y < w.size - viewedge) {
-                    w.viewy = p.position.y - w.viewsize * 0.5;
-                }
+                // update view position based on new player positiond
+                w.viewx = (p.position.x - w.viewsize / 2); //this.game.mousex;
+                w.viewy = (p.position.y - (w.viewsize / 2) / (GameHandler.width / GameHandler.height)); //this.game.mousey;
 
                 // ensure enemy count is as appropriate for the current wave
                 var wave = this.waves[this.currentWave],
@@ -1024,7 +1000,12 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
                     }
                 }
             },
-
+            startFire: function doFire(){
+                this.controlFire = true;
+            },
+            stopFire: function doFire(){
+                this.controlFire = false;
+            },
             /**
              * Scene rendering event handler
              */
@@ -1051,7 +1032,7 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
 
             intervalRenderer: function intervalRenderer(interval, ctx) {
                 if (interval.framecounter++ < 50) {
-                    Game.centerFillText(ctx, interval.label, Game.fontFamily(this.world, 18), GameHandler.height / 2 - 9, "white");
+                    //Game.centerFillText(ctx, interval.label, Game.fontFamily(this.world, 18), GameHandler.height / 2 - 9, "white");
                 }
                 else {
                     interval.complete = true;
@@ -1113,16 +1094,16 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
                     }
                     case GameHandler.KEY.OPENBRACKET:
                     {
-                        if (this.world.viewsize > 500) {
-                            this.world.viewsize -= 100;
+                        if (this.world.viewsize > 2000) {
+                            this.world.viewsize -= GameHandler.SCROLLRATE;
                         }
                         return true;
                         break;
                     }
                     case GameHandler.KEY.CLOSEBRACKET:
                     {
-                        if (this.world.viewsize < 1500) {
-                            this.world.viewsize += 100;
+                        if (this.world.viewsize < this.world.size) {
+                            this.world.viewsize += GameHandler.SCROLLRATE;
                         }
                         return true;
                         break;
@@ -1166,6 +1147,34 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
                 }
             },
 
+            onScrollHandler: function onScrollHandler(direction){
+                if(direction > 0){
+                    if (this.world.viewsize > GameHandler.SCROLLRATE) {
+                        this.world.viewsize -= GameHandler.SCROLLRATE;
+                    }
+                }
+                else{
+                    if (this.world.viewsize < this.world.size) {
+                        this.world.viewsize += GameHandler.SCROLLRATE;
+                    }
+                }
+                return true;
+            },
+
+            onMouseClickHandler: function onMouseClickHandler(e){
+                switch(e.button){
+                    case 0: //mouse1
+
+                        break;
+                    case 1: //scroll click
+
+                        break;
+                    case 2: //mouse2
+
+                        break;
+                }
+                return true;
+            },
             /**
              * Handle Gamepad API axis input
              */
@@ -1485,57 +1494,39 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
                     height = GameHandler.height;
 
                 ctx.save();
-
-                // energy bar (scaled down from player energy max)
-                var ewidth = ~~(100 * w.scale * 2),
-                    eheight = ~~(4 * w.scale * 2);
-                ctx.strokeStyle = "rgb(128,128,50)";
-                ctx.strokeRect(4, 4, ewidth + 1, 4 + eheight);
-                ctx.fillStyle = "rgb(255,255,150)";
-                ctx.fillRect(5, 5, (this.player.energy / (this.player.ENERGY_INIT / ewidth)), 3 + eheight);
-
-                // score display - update towards the score in increments to animate it
                 ctx.fillStyle = "white";
-                ctx.font = Game.fontFamily(w, 12);
-                var fontYPos = Game.fontSize(w, 12) + 2,
-                    score = this.game.score,
-                    inc = (score - this.scoredisplay) * 0.1;
-                this.scoredisplay += inc;
-                if (this.scoredisplay > score) {
-                    this.scoredisplay = score;
-                }
-                var sscore = Ceil(this.scoredisplay).toString();
-                // pad with zeros
-                for (var i = 0, j = 8 - sscore.length; i < j; i++) {
-                    sscore = "0" + sscore;
-                }
-                ctx.fillText(sscore, width * 0.2 + width * 0.1, fontYPos);
+                ctx.font = '5pt "4pixel"';
 
-                // high score
-                // TODO: add method for incrementing score so this is not done here
-                if (score > this.game.highscore) {
-                    this.game.highscore = score;
-                }
-                sscore = this.game.highscore.toString();
-                // pad with zeros
-                for (var i = 0, j = 8 - sscore.length; i < j; i++) {
-                    sscore = "0" + sscore;
-                }
-                ctx.fillText("HI: " + sscore, width * 0.4 + width * 0.1, fontYPos);
 
-                // score multiplier indicator
-                ctx.fillText("x" + this.game.scoreMultiplier, width * 0.7 + width * 0.1, fontYPos);
 
-                // time per wave indicator
-                var wave = this.waves[this.currentWave],
-                    now = Date.now();
-                var time = ~~((now - this.timeInScene) / 1000) + "/" + wave.lifetime;
-                ctx.fillText(time.toString(), width * 0.8 + width * 0.1, fontYPos);
+                var now = new Date();
+
+                //time global
+                //time ship
+                //time local
+                ctx.fillText("UTC: " + (now.getUTCFullYear() + 986) + '-' +
+                    ('0' + (now.getUTCMonth() + 1)).slice(-2) + '-' +
+                    ('0' + now.getUTCDate()).slice(-2) + ' ' +
+                    ('0' + now.getUTCHours()).slice(-2) + ':' +
+                    ('0' + now.getUTCMinutes()).slice(-2) + ':' +
+                    ('0' + now.getUTCSeconds()).slice(-2) + ' ' +
+                    now.getUTCMilliseconds()
+                    , width * 0.1, 20);
+                //position x on globalmap
+                ctx.fillText('POS: X:' + this.player.position.x.toFixed() , width * 0.7, 20);
+                //position y on globalmap
+                ctx.fillText(' Y:' + this.player.position.y.toFixed() , width * 0.7 + 24, 28);
+
+                //angle in degrees
+                //acceleration x
+                //acceleration y
+                //acceleration axis
+                //velocity
 
                 // debug output
                 if (DEBUG && DEBUG.FPS) {
-                    Game.fillText(ctx, "TPF: " + GameHandler.frametime, Game.fontFamily(w, 10), 0, height - Game.fontSize(w, 10) - 2, "lightblue");
-                    Game.fillText(ctx, "FPS: " + GameHandler.maxfps, Game.fontFamily(w, 10), 0, height - 2, "lightblue");
+                    Game.fillText(ctx, "TPF: " + GameHandler.frametime, ctx.font, 0, height - Game.fontSize(w, 10) - 2, "lightblue");
+                    Game.fillText(ctx, "FPS: " + GameHandler.maxfps, ctx.font, 0, height - 2, "lightblue");
                 }
 
                 ctx.restore();
@@ -1543,6 +1534,10 @@ Arena.ShadowSize = isFireFox ? 4 : 8;
         });
 })();
 
+function add_zero_before(int, length) {
+    valdecimalLength = int.ToString("D").Length + length;
+    return format.replace(/%((%)|s)/g, function (m) { return m[2] || arg[i++] })
+}
 
 /**
  * Starfield star class.

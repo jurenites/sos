@@ -89,6 +89,8 @@ var GameHandler =
      */
     GAMEPAD: 1000,
 
+    SCROLLRATE: 1000,
+
     /**
      * Webkit Gamepad support
      */
@@ -136,7 +138,6 @@ var GameHandler =
 
         // calculate the initial canvas offsets by manually calling the resize handler
         this.resizeHandler();
-
         // Chrome Webkit with GamePad detection
         // Webkit does not support the Gamepad events - so poll for pad input directly
         this.webkitGamepad = (typeof navigator.webkitGamepads !== "undefined");
@@ -169,17 +170,15 @@ var GameHandler =
     resizeHandler: function () {
         var me = GameHandler;
         var el = me.canvas, x = 0, y = 0;
-        do
+/*        do
         {
             y += el.offsetTop;
             x += el.offsetLeft;
         } while (el = el.offsetParent);
-
-
+*/
         // compute offset including page view position
-        me.offsetX = x - window.pageXOffset;
-        me.offsetY = y - window.pageYOffset;
-
+        //me.offsetX = x - window.pageXOffset;
+        //me.offsetY = y - window.pageYOffset;
 
         // canvas size may be controlled by window height if minimum size set
         if (me.minimumSize) {
@@ -192,12 +191,16 @@ var GameHandler =
                     x = w.innerWidth || e.clientWidth || g.clientWidth,
                     y = w.innerHeight || e.clientHeight || g.clientHeight;
 
-                me.width = x;
-                me.height = y;
-                me.canvas.width = x;
-                me.canvas.height = y;
+                if(me.height != y){
+                    me.height = y;
+                    me.canvas.height = y - 20;
+                }
+                if(me.width != x){
+                    me.width = x;
+                    me.canvas.width = x - 20;
+                }
 
-                me.width = me.height = me.canvas.width = me.canvas.height = size;
+                //me.width = me.height = me.canvas.width = me.canvas.height = size;
                 //me.width = me.canvas.width = size;
             }
         }
@@ -339,6 +342,49 @@ Game.worldToScreen = function worldToScreen(vector, world, radiusx, radiusy) {
             }
         };
 
+        document.onmousedown = function (event) {
+            if (me.sceneIndex !== -1 && me.sceneIndex !== 0) {
+                me.scenes[me.sceneIndex].startFire();
+                if (me.scenes[me.sceneIndex].onMouseClickHandler(event)) {
+                    // the key is handled, prevent any further events
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }
+            else {
+                // default handler to stop some annoying browser behavior
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        };
+
+        document.onmouseup = function (event) {
+            me.scenes[me.sceneIndex].stopFire();
+        };
+
+        var fMouseScroll = function (event) {
+            if (me.sceneIndex !== -1 && me.sceneIndex !== 0) {
+                if (me.scenes[me.sceneIndex].onScrollHandler(event.wheelDelta)) {
+                    // the key is handled, prevent any further events
+                    return false;
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }
+            else {
+                // default handler to stop some annoying browser behavior
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        };
+
+        var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn't recognize mousewheel as of FF3.x
+        if (GameHandler.canvas.attachEvent) //if IE (and Opera depending on user setting)
+            GameHandler.canvas.attachEvent("on"+mousewheelevt, fMouseScroll)
+        else if (GameHandler.canvas.addEventListener) //WC3 browsers
+            GameHandler.canvas.addEventListener(mousewheelevt, fMouseScroll, false)
+
+
         // GamePad support - Moz (FireFox Nightly 11.0a1) and Webkit (Chrome 18) only!
         var buttonPressed = function buttonPressed(e, pressed) {
             if (me.sceneIndex !== -1) {
@@ -371,6 +417,7 @@ Game.worldToScreen = function worldToScreen(vector, world, radiusx, radiusy) {
         currentScene: null,
         sceneIndex: -1,
         interval: null,
+        mouseHoldStart: null,
 
         /**
          * Game frame execute method - called by anim handler timeout
@@ -387,12 +434,10 @@ Game.worldToScreen = function worldToScreen(vector, world, radiusx, radiusy) {
                         for (var b = 0; b < pad.buttons.length; b++) {
                             // TODO: deal with button up/down values to ensure orthogonal button press events!
                             if (pad.buttons[b] === 1) {
-                                //console.log(b + " := " + pad.buttons[b]);
                                 this.scenes[this.sceneIndex].onKeyDownHandler(GameHandler.GAMEPAD + b);
                             }
                         }
                         for (var a = 0; a < pad.axes.length; a++) {
-                            //console.log("axes" + a + " := " + pad.axes[a]);
                             this.scenes[this.sceneIndex].onAxisHandler(a, pad.axes[a]);
                         }
                         break;
@@ -495,7 +540,7 @@ Game.worldToScreen = function worldToScreen(vector, world, radiusx, radiusy) {
         interval: null,
 
         world: {
-            size: 1500,       // total units vertically and horizontally
+            size: 15000,       // total units vertically and horizontally
             viewx: 0,         // current view left corner xpos
             viewy: 0,         // current view left corner ypos
             viewsize: 1000,   // size of the viewable area
@@ -536,7 +581,7 @@ Game.worldToScreen = function worldToScreen(vector, world, radiusx, radiusy) {
 
 (function () {
     Game.Interval = function (label, intervalRenderer) {
-        this.label = label;
+        //this.label = label;
         this.intervalRenderer = intervalRenderer;
         this.framecounter = 0;
         this.complete = false;
@@ -544,7 +589,7 @@ Game.worldToScreen = function worldToScreen(vector, world, radiusx, radiusy) {
 
     Game.Interval.prototype =
     {
-        label: null,
+        //label: null,
         intervalRenderer: null,
         framecounter: 0,
         complete: false,

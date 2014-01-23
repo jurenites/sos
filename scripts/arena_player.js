@@ -18,56 +18,8 @@
 
         // 3D sprite object - must be created after constructor call
         // TODO: can be removed once K3D real-time is disabled
-        var obj = new Arena.K3DObject();
-        with (obj) {
-            drawmode = "wireframe";
-            shademode = "depthcue";
-            depthscale = 32;
-            linescale = 3;
-            perslevel = 256;
-            color = [255, 255, 255];
-            addphi = 0.0;
-            scale = 1;
-            init(
-                [
-                    {x: -20, y: -20, z: 0},
-                    //{x:-15,y:-25,z:20},
-                    //{x:15,y:-25,z:20},
-                    {x: 20, y: -20, z: 0},
-                    //{x:15,y:-25,z:-20},
-                    //{x:-15,y:-25,z:-20},
-                    {x: 20, y: 20, z: 0},
-                    {x: -20, y: 20, z: 0}
-                ],
-                [
-                    {a: 0, b: 1},
-                    {a: 1, b: 2},
-                    {a: 2, b: 3},
-                    {a: 3, b: 0}
-                    //{a:3,b:4},
-                    //{a:4,b:5},
-                    //{a:5,b:0},
-                    //{a:1,b:6},
-                    //{a:2,b:6},
-                    //{a:4,b:6},
-                    //{a:5,b:6},
-                    //{a:0,b:6},
-                    //{a:3,b:6}
-                ],
-                [
-                    {vertices: [0, 1, 2]},
-                    {vertices: [1, 3, 2]}
-                    //{vertices:[1,2,6]},
-                    //{vertices:[2,3,6]},
-                    //{vertices:[3,4,6]},
-                    //{vertices:[4,5,6]},
-                    //{vertices:[5,0,6]},
-                    //{vertices:[0,1,2,3,4,5]}
-                ]
-            );
-        }
+        var obj = this.getShipShape();
         this.setK3DObject(obj);
-
         return this;
     };
 
@@ -114,6 +66,56 @@
 
             frame: 0,
 
+            getShipShape: function getShipShape(){
+                var obj = new Arena.K3DObject();
+                with (obj) {
+                    drawmode = "wireframe";     // one of "point", "wireframe", "solid"
+                    shademode = "depthcue";     // one of "plain", "depthcue",
+                    depthscale = 32;
+                    linescale = 3;
+                    perslevel = 256;
+                    color = [255, 255, 255];    // colour used for wireframe edges and depthcues
+                    addphi = 0.0;               // 1 degree of rotation around Y axis per frame
+                    scale = 1;                  // make X times bigger
+                    init(
+                        [
+                            {x: 10,y: 20, z: 0},
+                            {x: 20,y: 10, z: 0},
+                            {x: 20,y: -20, z: 0},
+                            {x: 10,y: -20, z: 0},
+                            {x: 5,y: -15, z: 0},
+                            {x: -5,y: -15, z: 0},
+                            {x: -10,y: -20, z: 0},
+                            {x: -20,y: -20, z: 0},
+                            {x: -20,y: 10, z: 0},
+                            {x: -10,y: 20, z: 0}
+                        ],
+                        [
+                            {a: 0, b: 1},
+                            {a: 1, b: 2},
+                            {a: 2, b: 3},
+                            {a: 3, b: 4},
+                            {a: 4, b: 5},
+                            {a: 5, b: 6},
+                            {a: 6, b: 7},
+                            {a: 7, b: 8},
+                            {a: 8, b: 9},
+                            {a: 9, b: 0}
+                        ],
+                        [
+                            /*{color:[0,0,255],vertices: [0, 1, 4]},
+                            {vertices: [1, 2, 4]},
+                            {vertices: [2, 3, 4]},
+                            {vertices: [4, 5, 9]},
+                            {vertices: [9, 0, 4]},
+                            {vertices: [9, 8, 5]},
+                            {vertices: [8, 7, 5]},
+                            {vertices: [7, 6, 5]}*/
+                        ]
+                    );
+                }
+                return obj;
+            },
             /**
              * Player rendering method
              *
@@ -134,15 +136,25 @@
                         ctx.translate(viewposition.x, viewposition.y);
                         ctx.scale(world.scale, world.scale);
                         ctx.rotate(headingRad);
-                        ctx.translate(0, -4);   // slight offset so that collision radius is centered
-                        ctx.globalAlpha = 0.4 + Rnd() * 0.5;
-                        ctx.fillStyle = Arena.Colours.PLAYER_THRUST;
+                        //ctx.translate(0, -4);   // slight offset so that collision radius is centered
+                        ctx.globalAlpha = 0.4;
+                        //ctx.fillStyle = Arena.Colours.PLAYER_THRUST;
                         ctx.beginPath();
-                        ctx.moveTo(-12, 20);
-                        ctx.lineTo(12, 20);
-                        ctx.lineTo(0, 50 + Rnd() * 20);
+                        ctx.moveTo(-20, 20);
+                        ctx.lineTo(-10, 20);
+                        ctx.lineTo(-15, 20 + Rnd() * 20);
                         ctx.closePath();
                         ctx.fill();
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.moveTo(20, 20);
+                        ctx.lineTo(10, 20);
+                        ctx.lineTo(15, 20 + Rnd() * 20);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+
                         ctx.restore();
                         this.engineThrust = false;
                     }
