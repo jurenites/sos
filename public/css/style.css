@@ -1,0 +1,16 @@
+@font-face {
+    font-family: '4pixel';
+    src: url('../fonts/4pixel.eot'); /* IE9 Compat Modes */
+    src: url('../fonts/4pixel.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/4pixel.woff') format('woff'), /* Modern Browsers */
+    url('../fonts/4pixel.ttf')  format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/4pixel.svg#svgFontName') format('svg'); /* Legacy iOS */
+}
+body
+{
+    background-color: #000;
+    margin: 0;
+    font-family: '4pixel';
+    color: #fff;
+    font-size: 10px;
+}
