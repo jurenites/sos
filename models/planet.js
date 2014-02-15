@@ -1,31 +1,29 @@
-var mongoose = require('../utils/mongoose');,
+var mongoose = require('../utils/mongoose');
 var Schema = mongoose.Schema;
-    //async = require('async');
+
 /**
  * Object Planet
  */
 var Planet = new Schema({
     radius: {
-        type: Int,
+        type: Number,
         required: true
     },
     name: {
         type: String,
+        unique: true,
         required: true
     },
     position_x: {
-        type: Int,
+        type: Number,
         required: true
     },
     position_y: {
-        type: Int,
+        type: Number,
         required: true
     }
 });
 
-Planet.methods.getRadius = function () {
-    return TRUE;
-};
 /*
 Planet.virtual('password')
     .set(function (password) {
@@ -49,4 +47,4 @@ Planet.methods.get_position = function () {
     return {'x': this.position_x,'y': this.position_y};
 };
 
-module.exports = mongoose.model('Planet', Planet);
+exports.Planet = mongoose.model('Planet', Planet);

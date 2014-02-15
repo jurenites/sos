@@ -21,6 +21,7 @@ var petya = new User('Petya');
 vasya.sayHello(petya);
 */
 
+
 var http = require('http');
 
 var server = new http.Server();

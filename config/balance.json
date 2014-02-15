@@ -1,3 +1,67 @@
 {
-    "Hello" : "Привет"
+    "star": {
+        "name": "Sun"
+    },
+    "planets" : [
+        {
+            "name": "Mercury",
+
+            "orbital_speed": 47.87,
+            "radius": 2439700,
+            "position_x": 100 ,
+            "position_y": 100
+        },
+        {
+            "name": "Venus",
+
+            "orbital_speed": 35.02,
+            "radius": 6051800,
+            "position_x": 300,
+            "position_y": 300
+        },
+        {
+            "name": "Earth",
+            "satellites": [
+                {"name": "Moon"}
+            ],
+            "aphelion": 152098232000,
+            "perihelion": 147098290000,
+            "semi_major_axis": 149598261000, "distance_radius": "from star to earth",
+            "orbital_period": 365,"period": "days",
+            "orbital_speed": 29.78,"speed": "km/s",
+            "radius": 6378100,
+            "mass": 5.97219e+24,
+            "escape_velocity":11.186,
+            "rotation_period": 24,"rotation_per":"hours",
+            "rotation_velocity": 0.4651,
+            "min_temperature":  "−89.2",
+            "max_temperature":  "56.7", "temperature":"°C",
+            "position_x": 500,
+            "position_y": 500
+        },
+        {
+            "name": "Mars",
+
+            "orbital_speed": 24.13,
+            "radius": 3396200,
+            "position_x": 800,
+            "position_y": 800
+        },
+        {
+            "name": "Jupiter",
+            "orbital_speed": 13.07
+        },
+        {
+            "name": "Saturn",
+            "orbital_speed": 9.69
+        },
+        {
+            "name": "Uranus",
+            "orbital_speed": 6.81
+        },
+        {
+            "name": "Neptune",
+            "orbital_speed": 5.43
+        }
+    ]
 }
