@@ -6,6 +6,9 @@
     url('../fonts/4pixel.ttf')  format('truetype'), /* Safari, Android, iOS */
     url('../fonts/4pixel.svg#svgFontName') format('svg'); /* Legacy iOS */
 }
+html{
+    height: 100%;
+}
 body
 {
     background-color: #000;
@@ -13,4 +16,5 @@ body
     font-family: '4pixel';
     color: #fff;
     font-size: 10px;
+    mon-height: 100%;
 }

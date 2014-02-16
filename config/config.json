@@ -13,10 +13,12 @@
     },
     "session": {
         "secret": "secret_key",
+        "salt": "session_salt",
         "key": "cid",
         "cookie": {
             "path": "/",
-            "httpOnly": true
+            "httpOnly": true,
+            "expires": 1209600000
         }
     }
 }
