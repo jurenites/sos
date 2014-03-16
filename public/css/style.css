@@ -16,5 +16,10 @@ body
     font-family: '4pixel';
     color: #fff;
     font-size: 10px;
-    mon-height: 100%;
+    min-height: 100%;
+}
+canvas#game{
+    background-color: #111;
+    margin: 0 auto;
+    display: block;
 }

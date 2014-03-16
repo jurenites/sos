@@ -4,7 +4,7 @@ powered by:
          __    __  ________          ________
         / /   / / / ______/ ______  / ____  /
        / /   / / /_/   __  /     / / /___/_/
-      /_/___/ / ______/ / / ____/ / ____/   _______
+      /_/___/ / ______/ / / ____/ / ____/_  _______
        /_____/ /_______/ /_/     /_/   /_/ /______/
 -->
 <html>
@@ -12,10 +12,301 @@ powered by:
     <title>SOlarSystem</title>
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="css/style.css" />
+
+    <!--[if IE]><script type="text/javascript" src="lib/excanvas.js"></script><![endif]-->
+    <!-- prototype js -->
+    <script src="js/lib/prototype-1.6.0.2.js"></script>
+
+    <!-- box2djs -->
+    <script src='js/box2d/common/b2Settings.js'></script>
+    <script src='js/box2d/common/math/b2Vec2.js'></script>
+    <script src='js/box2d/common/math/b2Mat22.js'></script>
+    <script src='js/box2d/common/math/b2Math.js'></script>
+    <script src='js/box2d/collision/b2AABB.js'></script>
+    <script src='js/box2d/collision/b2Bound.js'></script>
+    <script src='js/box2d/collision/b2BoundValues.js'></script>
+    <script src='js/box2d/collision/b2Pair.js'></script>
+    <script src='js/box2d/collision/b2PairCallback.js'></script>
+    <script src='js/box2d/collision/b2BufferedPair.js'></script>
+    <script src='js/box2d/collision/b2PairManager.js'></script>
+    <script src='js/box2d/collision/b2BroadPhase.js'></script>
+    <script src='js/box2d/collision/b2Collision.js'></script>
+    <script src='js/box2d/collision/Features.js'></script>
+    <script src='js/box2d/collision/b2ContactID.js'></script>
+    <script src='js/box2d/collision/b2ContactPoint.js'></script>
+    <script src='js/box2d/collision/b2Distance.js'></script>
+    <script src='js/box2d/collision/b2Manifold.js'></script>
+    <script src='js/box2d/collision/b2OBB.js'></script>
+    <script src='js/box2d/collision/b2Proxy.js'></script>
+    <script src='js/box2d/collision/ClipVertex.js'></script>
+    <script src='js/box2d/collision/shapes/b2Shape.js'></script>
+    <script src='js/box2d/collision/shapes/b2ShapeDef.js'></script>
+    <script src='js/box2d/collision/shapes/b2BoxDef.js'></script>
+    <script src='js/box2d/collision/shapes/b2CircleDef.js'></script>
+    <script src='js/box2d/collision/shapes/b2CircleShape.js'></script>
+    <script src='js/box2d/collision/shapes/b2MassData.js'></script>
+    <script src='js/box2d/collision/shapes/b2PolyDef.js'></script>
+    <script src='js/box2d/collision/shapes/b2PolyShape.js'></script>
+    <script src='js/box2d/dynamics/b2Body.js'></script>
+    <script src='js/box2d/dynamics/b2BodyDef.js'></script>
+    <script src='js/box2d/dynamics/b2CollisionFilter.js'></script>
+    <script src='js/box2d/dynamics/b2Island.js'></script>
+    <script src='js/box2d/dynamics/b2TimeStep.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2ContactNode.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2Contact.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2ContactConstraint.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2ContactConstraintPoint.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2ContactRegister.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2ContactSolver.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2CircleContact.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2Conservative.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2NullContact.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2PolyAndCircleContact.js'></script>
+    <script src='js/box2d/dynamics/contacts/b2PolyContact.js'></script>
+    <script src='js/box2d/dynamics/b2ContactManager.js'></script>
+    <script src='js/box2d/dynamics/b2World.js'></script>
+    <script src='js/box2d/dynamics/b2WorldListener.js'></script>
+    <script src='js/box2d/dynamics/joints/b2JointNode.js'></script>
+    <script src='js/box2d/dynamics/joints/b2Joint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2JointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2DistanceJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2DistanceJointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2Jacobian.js'></script>
+    <script src='js/box2d/dynamics/joints/b2GearJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2GearJointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2MouseJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2MouseJointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2PrismaticJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2PrismaticJointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2PulleyJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2PulleyJointDef.js'></script>
+    <script src='js/box2d/dynamics/joints/b2RevoluteJoint.js'></script>
+    <script src='js/box2d/dynamics/joints/b2RevoluteJointDef.js'></script>
+    <!-- end -->
+
     <script src="js/Stats.js"></script>
-    <script src="js/client.js"></script>
+    <script src="js/bower_components/socket.io-client/dist/socket.io.js"></script>
+    <script type="text/javascript">
+        //@todo add loader
+        //onload page
+        document.addEventListener('DOMContentLoaded',function(){
+
+            // connection to the server via socked
+            var socket = io.connect('',{'reconnect': false});
+            socket
+                .on('message', function (message) {
+                    console.log(message);
+                    //socket.emit('my other event', { my: 'data' });
+                })
+                .on('connect', function(){
+                    console.log('connect');
+                })
+                .on('disconnect', function(){
+                    console.log('disconnect');
+                    setTimeout(reconnect,500)
+                });
+            function reconnect(){
+                socket.once('error', function(){
+                    setTimeout(reconnect, 500);
+                });
+                socket.socket.connect();
+            }
+        });
+
+        //draw a world via box2d engine
+        var initId = 0;
+        var world = createWorld();
+        var ctx;
+        var canvasWidth;
+        var canvasHeight;
+        var canvasTop;
+        var canvasLeft;
+
+        var demos = {};
+        demos.InitWorlds = [];
+
+        //initialize world objects.
+        demos.stack = {};
+        demos.stack.initWorld = function(world) {
+            var sd = new b2BoxDef();
+            var bd = new b2BodyDef();
+            bd.AddShape(sd);
+            sd.density = 1.0;
+            sd.friction = 0.5;
+            sd.extents.Set(10, 10);
+
+            var i;
+            for (i = 0; i < 8; i++) {
+                bd.position.Set(500/2-Math.random()*2-1, (250-5-i*22));
+                world.CreateBody(bd);
+            }
+            for (i = 0; i < 8; i++) {
+                bd.position.Set(500/2-100-Math.random()*5+i, (250-5-i*22));
+                world.CreateBody(bd);
+            }
+            for (i = 0; i < 8; i++) {
+                bd.position.Set(500/2+100+Math.random()*5-i, (250-5-i*22));
+                world.CreateBody(bd);
+            }
+        }
+        demos.InitWorlds.push(demos.stack.initWorld);
+
+        Event.observe(window, 'load', function() {
+            //debugger info
+            if(typeof Stats != 'undefined'){
+                var stats = new Stats();
+                stats.setMode(0);
+                stats.domElement.style.position = 'absolute';
+                stats.domElement.style.left = '0px';
+                stats.domElement.style.top = '0px';
+
+                document.body.appendChild( stats.domElement );
+                stats.begin();
+            }
+
+            setupWorld();
+            var c = document.getElementById("game");
+            ctx = c.getContext("2d");
+            canvasWidth = parseInt(c.width);
+            canvasHeight = parseInt(c.height);
+            canvasTop = parseInt(0/*canvasElm.style.top*/);
+            canvasLeft = parseInt(0/*canvasElm.style.left*/);
+            /* Event.observe('canvas', 'click', function(e) {
+             //setupNextWorld();
+             if (Math.random() < 0.5)
+             demos.top.createBall(world, Event.pointerX(e) - canvasLeft, Event.pointerY(e) - canvasTop);
+             else
+             createBox(world, Event.pointerX(e) - canvasLeft, Event.pointerY(e) - canvasTop, 10, 10, false);
+             });
+             Event.observe('canvas', 'contextmenu', function(e) {
+             if (e.preventDefault) e.preventDefault();
+             setupPrevWorld();
+             return false;
+             });*/
+            step();
+
+            if(typeof Stats != 'undefined'){
+                stats.end();
+            }
+        });
+
+        function setupWorld(did) {
+            if (!did) did = 0;
+            world = createWorld();
+            initId += did;
+            initId %= demos.InitWorlds.length;
+            if (initId < 0) initId = demos.InitWorlds.length + initId;
+            demos.InitWorlds[initId](world);
+        }
+
+        function step(cnt) {
+            var stepping = false;
+            var timeStep = 1.0/60;
+            var iteration = 1;
+            world.Step(timeStep, iteration);
+
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            drawWorld(world, ctx);
+            setTimeout('step(' + (cnt || 0) + ')', 10);
+        }
+
+        function createWorld() {
+            var worldAABB = new b2AABB();
+            worldAABB.minVertex.Set(-1000, -1000);
+            worldAABB.maxVertex.Set(1000, 1000);
+            var gravity = new b2Vec2(0, 300);
+            var doSleep = true;
+            var world = new b2World(worldAABB, gravity, doSleep);
+            createGround(world);
+            createBox(world, 0, 125, 10, 250);
+            createBox(world, 500, 125, 10, 250);
+            return world;
+        }
+
+        function createGround(world) {
+            var groundSd = new b2BoxDef();
+            groundSd.extents.Set(1000, 50);
+            groundSd.restitution = 0.2;
+            var groundBd = new b2BodyDef();
+            groundBd.AddShape(groundSd);
+            groundBd.position.Set(-500, 340);
+            return world.CreateBody(groundBd)
+        }
+
+        function createBox(world, x, y, width, height, fixed) {
+            if (typeof(fixed) == 'undefined') fixed = true;
+            var boxSd = new b2BoxDef();
+            if (!fixed) boxSd.density = 1.0;
+            boxSd.extents.Set(width, height);
+            var boxBd = new b2BodyDef();
+            boxBd.AddShape(boxSd);
+            boxBd.position.Set(x,y);
+            return world.CreateBody(boxBd)
+        }
+
+
+
+        function drawWorld(world, context) {
+            for (var j = world.m_jointList; j; j = j.m_next) {
+                drawJoint(j, context);
+            }
+            for (var b = world.m_bodyList; b; b = b.m_next) {
+                for (var s = b.GetShapeList(); s != null; s = s.GetNext()) {
+                    drawShape(s, context);
+                }
+            }
+        }
+
+        function drawShape(shape, context) {
+            context.strokeStyle = '#ffffff';
+            context.beginPath();
+            switch (shape.m_type) {
+                case b2Shape.e_circleShape:
+                {
+                    var circle = shape;
+                    var pos = circle.m_position;
+                    var r = circle.m_radius;
+                    var segments = 16.0;
+                    var theta = 0.0;
+                    var dtheta = 2.0 * Math.PI / segments;
+                    // draw circle
+                    context.moveTo(pos.x + r, pos.y);
+                    for (var i = 0; i < segments; i++) {
+                        var d = new b2Vec2(r * Math.cos(theta), r * Math.sin(theta));
+                        var v = b2Math.AddVV(pos, d);
+                        context.lineTo(v.x, v.y);
+                        theta += dtheta;
+                    }
+                    context.lineTo(pos.x + r, pos.y);
+
+                    // draw radius
+                    context.moveTo(pos.x, pos.y);
+                    var ax = circle.m_R.col1;
+                    var pos2 = new b2Vec2(pos.x + r * ax.x, pos.y + r * ax.y);
+                    context.lineTo(pos2.x, pos2.y);
+                }
+                    break;
+                case b2Shape.e_polyShape:
+                {
+                    var poly = shape;
+                    var tV = b2Math.AddVV(poly.m_position, b2Math.b2MulMV(poly.m_R, poly.m_vertices[0]));
+                    context.moveTo(tV.x, tV.y);
+                    for (var i = 0; i < poly.m_vertexCount; i++) {
+                        var v = b2Math.AddVV(poly.m_position, b2Math.b2MulMV(poly.m_R, poly.m_vertices[i]));
+                        context.lineTo(v.x, v.y);
+                    }
+                    context.lineTo(tV.x, tV.y);
+                }
+                    break;
+            }
+            context.stroke();
+        }
+
+
+
+    </script>
 </head>
 <body>
-    <canvas id="game"></canvas>
+    <canvas width="500" height="300" id="game"></canvas>
 </body>
 </html>

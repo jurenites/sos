@@ -1,9 +1,9 @@
 {
   "name": "solarsystem",
-  "version": "0.0.1",
+  "version": "0.0.7",
   "private": true,
   "scripts": {
-    "start": "node client.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "3.4.8",
