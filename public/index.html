@@ -16,7 +16,32 @@ powered by:
     <script src="js/bower_components/socket.io-client/dist/socket.io.js"></script>
     <script type="text/javascript" src="js/lib/Box2dWeb-2.1.a.3.min.js"></script>
     <script type="text/javascript">
-        //onload page
+
+        /**
+         * Keycode constants
+         */
+        var KEY = {
+                SHIFT: 16, CTRL: 17, ESC: 27, RIGHT: 39, UP: 38, LEFT: 37, DOWN: 40, SPACE: 32,
+                A: 65, D: 68, E: 69, G: 71, L: 76,Q: 81, P: 80, R: 82, S: 83, T: 84, W: 87, Z: 90, OPENBRACKET: 219, CLOSEBRACKET: 221
+            };
+        /**
+         * Size screen
+         */
+        var minimum_screen_size = {x:640, y:480};
+
+        /**
+         * Id dom element
+         */
+        var dom_obj_id = "canvas";
+
+        /**
+         * Ideal FPS constant
+         */
+        var FPSMS = 1000 / 60;
+
+        /**
+         * onload page
+         */
         document.addEventListener('DOMContentLoaded',function(){
 
             // connection to the server via socked
@@ -56,7 +81,41 @@ powered by:
                 stats.end();
             }
         });
+
+        /**
+         * On resize
+         */
+        window.onresize = function(event) {
+            set_fullscreen();
+        }
+
+        /**
+         * Resize the dom element
+         */
+        function set_fullscreen(){
+            var dom_obj = document.getElementById(dom_obj_id);
+            if (minimum_screen_size.x <= dom_obj.offsetWidth || minimum_screen_size.y <= dom_obj.offsetHeight) {
+                var w = window,
+                    d = document,
+                    e = d.documentElement,
+                    g = d.getElementsByTagName('body')[0],
+                    x = w.innerWidth || e.clientWidth || g.clientWidth,
+                    y = w.innerHeight || e.clientHeight || g.clientHeight;
+
+                if(dom_obj.offsetWidth != x){
+                    dom_obj.style.width = x+"px";
+                }
+                if(dom_obj.offsetHeight != y){
+                    dom_obj.style.height = y+"px";
+                }
+            }
+        }
+
+        /**
+         * Initialization of applicaion
+         */
         function init() {
+            set_fullscreen();
             var b2Vec2 = Box2D.Common.Math.b2Vec2;
             var b2AABB = Box2D.Collision.b2AABB;
             var b2BodyDef = Box2D.Dynamics.b2BodyDef;
@@ -71,12 +130,11 @@ powered by:
             var b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef;
 
             var world = new b2World(
-                    new b2Vec2(0, 1)    //gravity
+                    new b2Vec2(0, 0.1)    //gravity
                     , true               //allow sleep
             );
-
             //set the gravity
-            //world.SetGravity(new b2Vec2(0, parseInt(1)));
+            world.SetGravity(new b2Vec2(0, 9.8));
 
             var fixDef = new b2FixtureDef;
             fixDef.density = 1.0;
@@ -88,8 +146,8 @@ powered by:
             //create ground
             bodyDef.type = b2Body.b2_staticBody;
             fixDef.shape = new b2PolygonShape;
-            fixDef.shape.SetAsBox(20, 2);
-            bodyDef.position.Set(10, 400 / 30 + 1.8);
+            fixDef.shape.SetAsBox(2, 2);
+            bodyDef.position.Set(10, 450 / 30 + 1.8);
             world.CreateBody(bodyDef).CreateFixture(fixDef);
             /*bodyDef.position.Set(10, -1.8);
             world.CreateBody(bodyDef).CreateFixture(fixDef);
@@ -98,7 +156,6 @@ powered by:
             world.CreateBody(bodyDef).CreateFixture(fixDef);
             bodyDef.position.Set(21.8, 13);
             world.CreateBody(bodyDef).CreateFixture(fixDef);*/
-
 
             //create some objects
             bodyDef.type = b2Body.b2_dynamicBody;
@@ -119,21 +176,24 @@ powered by:
                 world.CreateBody(bodyDef).CreateFixture(fixDef);
             }
 
+            var ship = addCircle(4,4,0.5);
+
+            var dom_obj = document.getElementById(dom_obj_id);
             //setup debug draw
             var debugDraw = new b2DebugDraw();
-            debugDraw.SetSprite(document.getElementById("canvas").getContext("2d"));
+            debugDraw.SetSprite(dom_obj.getContext("2d"));
             debugDraw.SetDrawScale(30.0);
             debugDraw.SetFillAlpha(0.5);
             debugDraw.SetLineThickness(1.0);
             debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
             world.SetDebugDraw(debugDraw);
 
-            window.setInterval(update, 1000 / 60);
+            window.setInterval(update, FPSMS);
 
             //mouse
 
             var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
-            var canvasPosition = getElementPosition(document.getElementById("canvas"));
+            var canvasPosition = getElementPosition(dom_obj);
 
             document.addEventListener("mousedown", function (e) {
                 isMouseDown = true;
@@ -149,30 +209,56 @@ powered by:
             }, true);
 
             //pressed
-            document.addEventListener('keypress', function(e){
+            document.addEventListener('keydown', function(e){
                 switch(e.keyCode)
                 {
-                    case 119: doSomething_1(); break; // w
-                    case 97: break; // a
-                    case 115: break; // s
-                    case 100: break; // d
+                    case KEY.W: move_forward(); break; // w
+                    case KEY.A: turn_left(); break; // a
+                    case KEY.S: move_back(); break; // s
+                    case KEY.D: turn_right(); break; // d
+                    case KEY.Q: strafe_left(); break; // q
+                    case KEY.E: strafe_right(); break; // e
                 }
             });
             //released
             window.onkeyup = function(e){
-                switch(e.keyCode)
-                {
-                    case 87: doSomething_2(); break; // w
-                    case 65: break; // a
-                    case 83: break; // s
-                    case 68: break; // d
-                }
-            }
-            function doSomething_1(){
 
             }
-            function doSomething_2(){
 
+            function move_forward(){
+                console.log('top');
+                move(ship, 0.0, -0.50);
+            }
+            function turn_left(){
+                angle = ship.GetBody().GetAngle();
+                ship.GetBody().SetAngle(angle - 0.1);
+            }
+            function move_back(){
+                console.log('back');
+                move(ship, 0.0, 50.0);
+            }
+            function turn_right(){
+                angle = ship.GetBody().GetAngle();
+                ship.GetBody().SetAngle(angle + 0.1);
+            }
+            function strafe_left(){
+                move(ship, -.50, 0.0);
+            }
+            function strafe_right(){
+                move(ship, 0.50, 0.0);
+            }
+
+            function move(obj, x, y) {
+                /*
+                 var f = m_body.getWorldVector(new b2Vec2(0.0, -30.0));
+                 var p = m_body.getWorldPoint(m_body.getLocalCenter().add(new Vec2(0.0, 2.0)));
+                 m_body.applyForce(f, p);*/
+
+                var b2Vec2 = Box2D.Common.Math.b2Vec2;
+                var body = obj.GetBody();
+                var method = (y>0) ? 'ApplyForce' : 'ApplyImpulse';
+
+                body[method](new b2Vec2(x, y), body.GetWorldCenter());
             }
 
             function keyPressed_handler(e) {
@@ -204,7 +290,7 @@ powered by:
             function handleMouseMove(e) {
                 mouseX = (e.clientX - canvasPosition.x) / 30;
                 mouseY = (e.clientY - canvasPosition.y) / 30;
-            };
+            }
 
             function getBodyAtMouse() {
                 mousePVec = new b2Vec2(mouseX, mouseY);
@@ -241,7 +327,7 @@ powered by:
                         md.bodyB = body;
                         md.target.Set(mouseX, mouseY);
                         md.collideConnected = true;
-                        md.maxForce = 300.0 * body.GetMass();
+                        md.maxForce = 200.0 * body.GetMass();
                         mouseJoint = world.CreateJoint(md);
                         body.SetAwake(true);
                     }
@@ -284,6 +370,12 @@ powered by:
             }
 
             function addCircle(x, y, r) {
+                fixDef.shape = new b2CircleShape( r );
+                bodyDef.position.x = x;
+                bodyDef.position.y = y;
+                var dynamicBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
+                return dynamicBody;
+                /*
                 var fixDef = new b2FixtureDef;
                 fixDef.density = 1.0;
                 fixDef.friction = 0.5;
@@ -296,11 +388,12 @@ powered by:
 
                 fixDef.shape = new b2CircleShape(r);
                 world.CreateBody(bodyDef).CreateFixture(fixDef);
+                */
             }
         }
     </script>
 </head>
 <body>
-<canvas id="canvas" width="600" height="400"></canvas>
+<canvas id="canvas" width="640" height="480"></canvas>
 </body>
 </html>
