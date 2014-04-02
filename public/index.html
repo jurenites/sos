@@ -40,6 +40,13 @@ powered by:
         var FPSMS = 1000 / 60;
 
         /**
+         * Force of gravity on Earth
+         */
+        var EARTH_GRAVITY = 0.0;
+
+        var ROTATION_SHIP_SPEED = 2;
+        var ROTATION_SHIP_SPEED_LIMIT = 4;
+        /**
          * onload page
          */
         document.addEventListener('DOMContentLoaded',function(){
@@ -103,10 +110,10 @@ powered by:
                     y = w.innerHeight || e.clientHeight || g.clientHeight;
 
                 if(dom_obj.offsetWidth != x){
-                    dom_obj.style.width = x+"px";
+                    dom_obj.width = x-10/*+"px"*/;
                 }
                 if(dom_obj.offsetHeight != y){
-                    dom_obj.style.height = y+"px";
+                    dom_obj.height = y-10/*+"px"*/;
                 }
             }
         }
@@ -116,6 +123,7 @@ powered by:
          */
         function init() {
             set_fullscreen();
+            var pressed = {};
             var b2Vec2 = Box2D.Common.Math.b2Vec2;
             var b2AABB = Box2D.Collision.b2AABB;
             var b2BodyDef = Box2D.Dynamics.b2BodyDef;
@@ -134,7 +142,7 @@ powered by:
                     , true               //allow sleep
             );
             //set the gravity
-            world.SetGravity(new b2Vec2(0, 9.8));
+            world.SetGravity(new b2Vec2(0, EARTH_GRAVITY));
 
             var fixDef = new b2FixtureDef;
             fixDef.density = 1.0;
@@ -147,7 +155,7 @@ powered by:
             bodyDef.type = b2Body.b2_staticBody;
             fixDef.shape = new b2PolygonShape;
             fixDef.shape.SetAsBox(2, 2);
-            bodyDef.position.Set(10, 450 / 30 + 1.8);
+            bodyDef.position.Set(10, 400 / 30 + 1.8);
             world.CreateBody(bodyDef).CreateFixture(fixDef);
             /*bodyDef.position.Set(10, -1.8);
             world.CreateBody(bodyDef).CreateFixture(fixDef);
@@ -189,9 +197,7 @@ powered by:
             world.SetDebugDraw(debugDraw);
 
             window.setInterval(update, FPSMS);
-
             //mouse
-
             var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
             var canvasPosition = getElementPosition(dom_obj);
 
@@ -209,82 +215,67 @@ powered by:
             }, true);
 
             //pressed
-            document.addEventListener('keydown', function(e){
-                switch(e.keyCode)
-                {
+            document.addEventListener('keydown', function(e){ pressed[e.keyCode] = true;});
+            //released
+            document.addEventListener('keyup', function(e){ delete pressed[e.keyCode]; });
+
+            function key_pressed_handler(key_code) {
+                switch(parseInt(key_code)){
+                    case KEY.UP:
                     case KEY.W: move_forward(); break; // w
+                    case KEY.LEFT:
                     case KEY.A: turn_left(); break; // a
+                    case KEY.DOWN:
                     case KEY.S: move_back(); break; // s
+                    case KEY.RIGHT:
                     case KEY.D: turn_right(); break; // d
                     case KEY.Q: strafe_left(); break; // q
                     case KEY.E: strafe_right(); break; // e
                 }
-            });
-            //released
-            window.onkeyup = function(e){
-
             }
 
             function move_forward(){
-                console.log('top');
-                move(ship, 0.0, -0.50);
+                move(ship, 0);
             }
             function turn_left(){
-                angle = ship.GetBody().GetAngle();
-                ship.GetBody().SetAngle(angle - 0.1);
+                ship_body = ship.GetBody();
+                current_angular_velocity = ship_body.GetAngularVelocity();
+                new_angular_velocity = current_angular_velocity - ROTATION_SHIP_SPEED;
+
+                if (ROTATION_SHIP_SPEED_LIMIT > Math.abs(new_angular_velocity)){
+                    ship_body.SetAngularVelocity(new_angular_velocity);
+                }
             }
             function move_back(){
-                console.log('back');
-                move(ship, 0.0, 50.0);
+                move(ship, 180);
             }
             function turn_right(){
-                angle = ship.GetBody().GetAngle();
-                ship.GetBody().SetAngle(angle + 0.1);
+                ship_body = ship.GetBody();
+                current_angular_velocity = ship_body.GetAngularVelocity();
+                new_angular_velocity = current_angular_velocity + ROTATION_SHIP_SPEED;
+
+                if (ROTATION_SHIP_SPEED_LIMIT > Math.abs(new_angular_velocity)){
+                    ship_body.SetAngularVelocity(new_angular_velocity);
+                }
             }
             function strafe_left(){
-                move(ship, -.50, 0.0);
+                move(ship, -90);
             }
             function strafe_right(){
-                move(ship, 0.50, 0.0);
+                move(ship, 90);
             }
 
-            function move(obj, x, y) {
-                /*
-                 var f = m_body.getWorldVector(new b2Vec2(0.0, -30.0));
-                 var p = m_body.getWorldPoint(m_body.getLocalCenter().add(new Vec2(0.0, 2.0)));
-                 m_body.applyForce(f, p);*/
-
-                var b2Vec2 = Box2D.Common.Math.b2Vec2;
+            function move(obj, degrees) {
                 var body = obj.GetBody();
-                var method = (y>0) ? 'ApplyForce' : 'ApplyImpulse';
 
-                body[method](new b2Vec2(x, y), body.GetWorldCenter());
-            }
+                var method = (false) ? 'ApplyForce' : 'ApplyImpulse';
+                var r = body.GetAngle();
+                //console.log(new b2Vec2(0,0));
+                console.log(body.GetLinearVelocityFromWorldPoint(new b2Vec2(0,0)));
 
-            function keyPressed_handler(e) {
-                console.log(e);
-                if(e.keyCode == Keyboard.UP){
-                    body.WakeUp();
-                    engineSpeed = -HORSEPOWERS;
-                }
-                if(e.keyCode == Keyboard.DOWN){
-                    engineSpeed = HORSEPOWERS;
-                }
-                if(e.keyCode == Keyboard.RIGHT){
-                    steeringAngle = MAX_STEER_ANGLE
-                }
-                if(e.keyCode == Keyboard.LEFT){
-                    steeringAngle = -MAX_STEER_ANGLE
-                }
-            }
+                var force = new b2Vec2(Math.cos( r + (degrees * Math.PI / 180) ), Math.sin( r + (degrees * Math.PI / 180)));
+                body[method](force, body.GetPosition());
 
-            function keyReleased_handler(e){
-                if(e.keyCode == Keyboard.UP || e.keyCode == Keyboard.DOWN){
-                    engineSpeed = 0;
-                }
-                if(e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.RIGHT){
-                    steeringAngle = 0;
-                }
             }
 
             function handleMouseMove(e) {
@@ -316,9 +307,15 @@ powered by:
             }
 
             //update
-
             function update() {
+                //friction for rotating ship
+                friction_rotating_ship();
 
+                for(i in pressed) {
+                    key_pressed_handler(i);
+                }
+
+                //set
                 if (isMouseDown && (!mouseJoint)) {
                     var body = getBodyAtMouse();
                     if (body) {
@@ -346,7 +343,27 @@ powered by:
                 world.DrawDebugData();
                 world.ClearForces();
             };
-
+            function friction_rotating_ship(){
+                ship_body = ship.GetBody();
+                current_angilar_velocity = ship_body.GetAngularVelocity();
+                if(current_angilar_velocity != 0){
+                    if(current_angilar_velocity > 0){
+                        new_angilar_velocity = ship_body.GetAngularVelocity() - (ROTATION_SHIP_SPEED/40);
+                        if(new_angilar_velocity > 0){
+                            ship_body.SetAngularVelocity(new_angilar_velocity);
+                        }else{
+                            ship_body.SetAngularVelocity(0);
+                        }
+                    } else {
+                        new_angilar_velocity = ship_body.GetAngularVelocity() + (ROTATION_SHIP_SPEED/40);
+                        if(new_angilar_velocity < 0){
+                            ship_body.SetAngularVelocity(new_angilar_velocity);
+                        }else{
+                            ship_body.SetAngularVelocity(0);
+                        }
+                    }
+                }
+            }
             //helpers
 
             //http://js-tut.aardon.de/js-tut/tutorial/position.html
@@ -371,6 +388,7 @@ powered by:
 
             function addCircle(x, y, r) {
                 fixDef.shape = new b2CircleShape( r );
+                //fixDef.angularDamping = 0.5;
                 bodyDef.position.x = x;
                 bodyDef.position.y = y;
                 var dynamicBody = world.CreateBody(bodyDef).CreateFixture(fixDef);

@@ -18,7 +18,7 @@ body
     font-size: 10px;
     min-height: 100%;
 }
-canvas#game{
+canvas#canvas{
     background-color: #111;
     margin: 0 auto;
     display: block;
