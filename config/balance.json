@@ -1,6 +1,28 @@
 {
     "star": {
-        "name": "Sun"
+        "name": "Sun",
+        "gravity": 27.94,
+        "radius": 696342000,
+        "mass": 1.9891e+30,
+        "special_classification": "G2V",
+        "density":[
+            "center": 1.622e+5, "param" : "kg/m3",
+            "photosphere": 2e-4,
+            "chromosphere": 2e-6,
+            "corona": 2e-12
+        ],
+        "composition"[
+            "H": 75.46,
+            "He": 24.85,
+            "O": 0.77,
+            "C": 0.29,
+            "Fe": 0.16,
+            "Ne": 0.12,
+            "N": 0.09,
+            "Si": 0.07,
+            "Mg": 0.05,
+            "S": 0.04,
+        ]
     },
     "planets" : [
         {
@@ -24,6 +46,7 @@
             "satellites": [
                 {"name": "Moon"}
             ],
+            "gravity": 9.8,
             "aphelion": 152098232000,
             "perihelion": 147098290000,
             "semi_major_axis": 149598261000, "distance_radius": "from star to earth",
@@ -53,7 +76,9 @@
         },
         {
             "name": "Saturn",
-            "orbital_speed": 9.69
+            "orbital_speed": 9.69,
+            "rings":[
+            ]
         },
         {
             "name": "Uranus",
@@ -63,5 +88,14 @@
             "name": "Neptune",
             "orbital_speed": 5.43
         }
+    ],
+    "asteroids" : [
+
+    ],
+    "nebula":[
+
+    ],
+    "asteroid belt": [
+
     ]
 }
