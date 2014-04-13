@@ -1,0 +1,114 @@
+<html>
+2<head>
+3     <script type="text/javascript" src="http://lib.ivank.net/ivank.js"></script>
+4     <script type="text/javascript" src="Box2dWeb-2.1.a.3.min.js"></script>
+5     <script type="text/javascript">
+6          var world;
+7          var bodies = [];	// instances of b2Body (from Box2D)
+8          var actors = [];	// instances of Bitmap (from IvanK)
+9          var up;
+10          
+11          function Start() 
+12          {	
+13               var stage = new Stage("c");
+14               stage.addEventListener(Event.ENTER_FRAME, onEF);
+15               
+16               // background
+17               var bg = new Bitmap( new BitmapData("winter2.jpg") );
+18               bg.scaleX = bg.scaleY = stage.stageHeight/512;
+19               stage.addChild(bg);
+20               
+21               var	b2Vec2		= Box2D.Common.Math.b2Vec2,
+22                    	b2BodyDef	= Box2D.Dynamics.b2BodyDef,
+23                    	b2Body		= Box2D.Dynamics.b2Body,
+24                    	b2FixtureDef	= Box2D.Dynamics.b2FixtureDef,
+25                    	b2World		= Box2D.Dynamics.b2World,
+26                    	b2PolygonShape	= Box2D.Collision.Shapes.b2PolygonShape;
+27                    	b2CircleShape	= Box2D.Collision.Shapes.b2CircleShape;
+28               
+29               world = new b2World(new b2Vec2(0, 10),  true);
+30               up = new b2Vec2(0, -5);
+31               
+32               // I decided that 1 meter = 100 pixels
+33               
+34               var bxFixDef	= new b2FixtureDef();	// box  fixture definition
+35               bxFixDef.shape	= new b2PolygonShape();
+36               var blFixDef	= new b2FixtureDef();	// ball fixture definition
+37               blFixDef.shape	= new b2CircleShape();
+38               bxFixDef.density	= blFixDef.density = 1;
+39               
+40               var bodyDef = new b2BodyDef();
+41               bodyDef.type = b2Body.b2_staticBody;
+42               
+43               // create ground
+44               bxFixDef.shape.SetAsBox(10, 1);
+45               bodyDef.position.Set(9, stage.stageHeight/100 + 1);
+46               world.CreateBody(bodyDef).CreateFixture(bxFixDef);
+47               
+48               bxFixDef.shape.SetAsBox(1, 100);
+49               // left wall
+50               bodyDef.position.Set(-1, 3);
+51               world.CreateBody(bodyDef).CreateFixture(bxFixDef);
+52               // right wall
+53               bodyDef.position.Set(stage.stageWidth/100 + 1, 3);
+54               world.CreateBody(bodyDef).CreateFixture(bxFixDef);
+55               
+56               // both images are 200 x 200 px
+57               var bxBD = new BitmapData("box.jpg");
+58               var blBD = new BitmapData("bigball.png");
+59               
+60               // let's add 25 boxes and 25 balls!
+61               bodyDef.type = b2Body.b2_dynamicBody;
+62               for(var i = 0; i < 50; i++)
+63               {
+64                    var hw = 0.1 + Math.random()*0.45;	// "half width"
+65                    var hh = 0.1 + Math.random()*0.45;	// "half height"
+66                    
+67                    bxFixDef.shape.SetAsBox(hw, hh);
+68                    blFixDef.shape.SetRadius(hw);
+69                    bodyDef.position.Set(Math.random()*7, -5 + Math.random()*5);
+70                    
+71                    var body = world.CreateBody(bodyDef);
+72                    if(i<25) body.CreateFixture(bxFixDef);	// box
+73                    else     body.CreateFixture(blFixDef);	// ball
+74                    bodies.push(body);
+75                    
+76                    var bm = new Bitmap(i<25 ? bxBD : blBD);  bm.x = bm.y = -100;
+77                    var actor = new Sprite();  actor.addChild(bm);
+78                    if(i<25) { actor.scaleX = hw;  actor.scaleY = hh; }
+79                    else     { actor.scaleX = actor.scaleY = hw;      }
+80                    
+81                    actor.addEventListener(MouseEvent.MOUSE_MOVE, Jump);	
+82                    stage.addChild(actor);
+83                    actors.push(actor);
+84               }
+85          }
+86          
+87          function onEF(e) 
+88          {
+89               world.Step(1 / 60,  3,  3);
+90               world.ClearForces();
+91               
+92               for(var i=0; i<actors.length; i++)
+93               {
+94                    var body  = bodies[i];
+95                    var actor = actors [i];
+96                    var p = body.GetPosition();
+97                    actor.x = p.x *100;	// updating actor
+98                    actor.y = p.y *100;
+99                    actor.rotation = body.GetAngle()*180/Math.PI;
+100               }
+101          }
+102          
+103          function Jump(e)
+104          {
+105               var a = e.currentTarget;	// current actor
+106               var i = actors.indexOf(a);
+107               //  cursor might be over ball bitmap, but not over a real ball
+108               if(i>=25 && Math.sqrt(a.mouseX*a.mouseX + a.mouseY*a.mouseY) > 100) return;
+109               bodies[i].ApplyImpulse(up, bodies[i].GetWorldCenter());
+110          }
+111     </script>
+112</head>
+113<body onload="Start();"><canvas id="c"></canvas></body>
+114</html>

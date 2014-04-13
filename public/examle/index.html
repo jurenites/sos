@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+   <script type="text/javascript" src="ivank.js"></script>
+   <script type="text/javascript" src="Box2dWeb-2.1.a.3.js"></script>
+   <script type="text/javascript">
+   
+   //note: Chrome doesn't allow you to run this file locally, so you might want to use firefox for testing or install xampp to run this trough localhost in Chrome
+   
+        var world;
+        var ballBody;		// ball (from Box2D)
+        var ballActor;	// ball instance of Bitmap (from IvanK)
+        var up;			//this stores the value for shooting the ball upwards on mouseover
+         
+         function Start() 
+         {	
+              var stage = new Stage("canvas"); //creating a stage based on canvas
+              stage.addEventListener(Event.ENTER_FRAME, onEF); //make stage listen to frame updates
+              
+              // background
+              var bg = new Bitmap( new BitmapData("bg_grid.jpg") );
+              //bg.scaleX = bg.scaleY = stage.stageHeight/512; //not using, sets the scale of the background image
+              stage.addChild(bg); //add the background image to the stage
+              
+			  //declare bunch of needed box2d variables
+              var	b2Vec2		= Box2D.Common.Math.b2Vec2,
+                   	b2BodyDef	= Box2D.Dynamics.b2BodyDef,
+                   	b2Body		= Box2D.Dynamics.b2Body,
+                   	b2FixtureDef	= Box2D.Dynamics.b2FixtureDef,
+                   	b2World		= Box2D.Dynamics.b2World,
+                   	b2PolygonShape	= Box2D.Collision.Shapes.b2PolygonShape;
+                   	b2CircleShape	= Box2D.Collision.Shapes.b2CircleShape;
+              
+              world = new b2World(new b2Vec2(0, 2),  true); //amount and direction of world gravity
+              up = new b2Vec2(0, -3); //how strongly does the ball react to the mouse
+              
+              // I decided that 1 meter = 30 pixels
+              
+              var ballFixDef	= new b2FixtureDef();	// ball fixture definition (defines the shape of the ball)
+               ballFixDef.shape	= new b2CircleShape(); //make it a circle
+               ballFixDef.shape.SetRadius(1); //size of our ball
+			   ballFixDef.density	= 1; //how heavy is our ball
+              
+              var bodyDef = new b2BodyDef();
+              bodyDef.type = b2Body.b2_staticBody;
+              
+             
+              
+              // let's add 1 ball to the physics simulation!
+              bodyDef.type = b2Body.b2_dynamicBody; //make the ball dynamic
+              bodyDef.position.Set(1,1); //set the position to the up left corner of the canvas
+                   
+                   var body = world.CreateBody(bodyDef); //create the body
+                   body.CreateFixture(ballFixDef);	//add the ball fixture
+                   ballBody = body; //set the ballBody variable to contain the created body
+                   
+				   // ball is 60 x 60 px
+				   var ballImage = new BitmapData("ball.png"); //get the ball image file
+
+				   var ballGraphic = new Bitmap(ballImage);  //assign ball image to the ballGraphic variable
+				   ballGraphic.x = ballGraphic.y = -30; //set the position of the graphic to match the ball size
+                   var actor = new Sprite(); //create a sprite called actor
+				   actor.addChild(ballGraphic); //add the ball graphic as the child of the actor to make it follow
+                   //actor.scaleX = actor.scaleY = 1; //not using, sets the scale of the actor
+                   
+                   actor.addEventListener(MouseEvent.MOUSE_MOVE, Jump);	//detect if the mouse is moved and if true invoke the jump function
+                   stage.addChild(actor); //add the actor to the stage
+                   ballActor = actor; //store the actor in the global ballActor variable
+              
+         }
+         
+		 //explanation for the arguments for world.step
+		 //timeStep = basically the framerate
+		 //velocityIterations = how strongly to correct velocity
+		 //positionIterations = hwo strongly to correct position
+		 
+         function onEF(e) //this function updates the world
+         {
+              world.Step(1 / 60,  3,  3); //( timeStep, velocityIterations, positionIterations);
+              world.ClearForces(); //not sure if this is needed anymore, it clears the forces affecting the simulation on every frame
+              
+              
+                   var p = ballBody.GetPosition(); //get the position of our ball, this is in meters and 1 meter = 30px
+                   ballActor.x = p.x *30;	// attach the actor to the ball by taking the ballBody x-position and multiplying with 30 to convert to pixels
+                   ballActor.y = p.y *30;  //same as above for y
+                   ballActor.rotation = ballBody.GetAngle()*180/Math.PI; //rotate actor based on the body
+               
+          }
+          
+          function Jump(e)
+          {
+               //  cursor might be over ball bitmap, but not over a real ball
+               if(Math.sqrt(ballActor.mouseX*ballActor.mouseX + ballActor.mouseY*ballActor.mouseY) > 30) return; //check if the square root of actor x times actor x plus actor y times actor y is more than 30 and return if true. This checks if the cursor is on top if the ball (remember the ball is 60 x 60)
+               ballBody.ApplyImpulse(up, ballBody.GetWorldCenter()); //else shoot the ball up, GetWorldCenter gets the center of mass for the ball
+          }
+     </script>
+</head>
+
+<body onload="Start();"><canvas id="canvas"></canvas></body>
+</html>

@@ -5,13 +5,13 @@
         "radius": 696342000,
         "mass": 1.9891e+30,
         "special_classification": "G2V",
-        "density":[
+        "density":{
             "center": 1.622e+5, "param" : "kg/m3",
             "photosphere": 2e-4,
             "chromosphere": 2e-6,
             "corona": 2e-12
-        ],
-        "composition"[
+        },
+        "composition":{
             "H": 75.46,
             "He": 24.85,
             "O": 0.77,
@@ -21,72 +21,814 @@
             "N": 0.09,
             "Si": 0.07,
             "Mg": 0.05,
-            "S": 0.04,
-        ]
+            "S": 0.04
+        }
     },
     "planets" : [
         {
             "name": "Mercury",
-
-            "orbital_speed": 47.87,
+            "gravity": 3.7,
+            "aphelion": 69816900 ,
+            "perihelion": 46001200 ,
+            "orbital_period": 87.969,
+            "orbital_speed": 172332,
             "radius": 2439700,
-            "position_x": 100 ,
-            "position_y": 100
+            "mass": 3.33022e+23,
+            "rotation_period": 1407.5 ,
+            "rotation_velocity": 10.892,
+            "min_temperature": -173 ,
+            "max_temperature": 426,
+            "atmosphere": {
+                "pressure": 0,
+                "composition":{
+                    "O": 42,
+                    "Na":29,
+                    "H":22,
+                    "He":6,
+                    "K":0.5
+                }
+            }
         },
         {
             "name": "Venus",
-
-            "orbital_speed": 35.02,
+            "satellites": [
+                {
+                    "name": "Ceres",
+                    "gravity":0.28,
+                    "aphelion":  445280000,
+                    "perihelion": 382520000,
+                    "orbital_period": 1680.99,
+                    "orbital_speed": 64375.2,
+                    "radius": 487.3,
+                    "mass":  9.43e+20,
+                    "rotation_period": 0.3781,
+                    "rotation_velocity":0
+                }
+            ],
+            "gravity": 8.87,
+            "aphelion":  108942109,
+            "perihelion": 107476259,
+            "orbital_period": 224.701,
+            "orbital_speed": 126072,
             "radius": 6051800,
-            "position_x": 300,
-            "position_y": 300
+            "mass": 4.8676e+24,
+            "rotation_period": -243, "rotation_orientation": "Retrograde",
+            "rotation_velocity":6.52,
+            "min_temperature": -220,
+            "max_temperature": 462,
+            "atmosphere": {
+                "pressure": 9.2,
+                "composition":{
+                    "CO2": 96.5,
+                    "N": 3.5
+                }
+            }
         },
         {
             "name": "Earth",
             "satellites": [
-                {"name": "Moon"}
+                {
+                    "name": "Moon",
+                    "gravity": 1.622,
+                    "aphelion":  405503,
+                    "perihelion": 363295,
+                    "orbital_period": 27,
+                    "orbital_speed": 3679.2,
+                    "radius": 1738.14,
+                    "mass":  7.3477e+22,
+                    "rotation_period": 27,"rotation_period_measure": "synchronous",
+                    "rotation_velocity":0
+                }
             ],
-            "gravity": 9.8,
-            "aphelion": 152098232000,
-            "perihelion": 147098290000,
-            "semi_major_axis": 149598261000, "distance_radius": "from star to earth",
+            "gravity": 9.8, "surface_gravity_measurement": "ms2",
+            "aphelion": 152098232000, "farest_distance_to_sun": "km",
+            "perihelion": 147098290000, "min_distance_radius": "from star to earth",
             "orbital_period": 365,"period": "days",
-            "orbital_speed": 29.78,"speed": "km/s",
+            "orbital_speed": 107200,"linear_speed": "km/h",
             "radius": 6378100,
             "mass": 5.97219e+24,
-            "escape_velocity":11.186,
             "rotation_period": 24,"rotation_per":"hours",
-            "rotation_velocity": 0.4651,
-            "min_temperature":  "−89.2",
-            "max_temperature":  "56.7", "temperature":"°C",
-            "position_x": 500,
-            "position_y": 500
+            "rotation_velocity": 1674.4,"rotation_speed": "km/h",
+            "min_temperature":  -89.2,
+            "max_temperature":  56.7, "temperature":"°C",
+            "atmosphere": {
+                "pressure": 101325, "pressure_measurement": "kPa",
+                "composition":{
+                    "N": 78.08,
+                    "O": 20.95,
+                    "H2O": 1, "water vapor":"varies with climate",
+                    "Ar": 0.93,
+                    "CO2": 0.039
+                }
+            }
         },
         {
             "name": "Mars",
-
-            "orbital_speed": 24.13,
+            "satellites": [
+                {
+                    "name": "Phobos",
+                    "gravity":0.0057,
+                    "aphelion": 9517.58,
+                    "perihelion": 9234.42 ,
+                    "orbital_period": 0.318,
+                    "orbital_speed": 7696.8,
+                    "radius": 11.2667,
+                    "mass":  1.0659e+16,
+                    "rotation_period": 0.318,
+                    "rotation_velocity": 0
+                },
+                {
+                    "name": "Deimos",
+                    "gravity":0.003,
+                    "aphelion": 23470.9,
+                    "perihelion": 23455.5,
+                    "orbital_period": 1.263,
+                    "orbital_speed": 4864.68,
+                    "radius": 6.2,
+                    "mass":  1.4762e+15,
+                    "rotation_period": 1.263,
+                    "rotation_velocity": 0
+                }
+            ],
+            "gravity": 3.711,
+            "aphelion":  249209300 ,
+            "perihelion":  206669000,
+            "orbital_period": 686.971,
+            "orbital_speed": 86677.2,
             "radius": 3396200,
-            "position_x": 800,
-            "position_y": 800
+            "mass": 6.4185e+23,
+            "rotation_period": 1.0259,
+            "rotation_velocity": 868.22,
+            "min_temperature": -143,
+            "max_temperature": 35,
+            "atmosphere": {
+                "pressure": 0.636,
+                "composition":{
+                    "CO2": 95.97,
+                    "Ar": 1.93,
+                    "N": 1.83,
+                    "O": 1.146,
+                    "CO": 0.0557
+                }
+            }
         },
         {
             "name": "Jupiter",
-            "orbital_speed": 13.07
+            "satellites": [
+                {
+                    "name": "Metis"
+                },
+                {
+                    "name": "Adrastea"
+                },
+                {
+                    "name": "Amalthea"
+                },
+                {
+                    "name": "Thebe"
+                },
+                {
+                    "name": "Io"
+                },
+                {
+                    "name": "Europa"
+                },
+                {
+                    "name": "Ganymede"
+                },
+                {
+                    "name": "Callisto"
+                },
+                {
+                    "name": "Themisto"
+                },
+                {
+                    "name": "Leda"
+                },
+                {
+                    "name": "Himalia"
+                },
+                {
+                    "name": "Lysithea"
+                },
+                {
+                    "name": "Elara"
+                },
+                {
+                    "name": "S/2000 J 11"
+                },
+                {
+                    "name": "Carpo"
+                },
+                {
+                    "name": "S/2003 J 12"
+                },
+                {
+                    "name": "Euporie"
+                },
+                {
+                    "name": "S/2003 J 3"
+                },
+                {
+                    "name": "S/2003 J 18"
+                },
+                {
+                    "name": "S/2011 J 1"
+                },
+                {
+                    "name": "S/2010 J 2"
+                },
+                {
+                    "name": "Thelxinoe"
+                },
+                {
+                    "name": "Euanthe"
+                },
+                {
+                    "name": "Helike"
+                },
+                {
+                    "name": "Orthosie"
+                },
+                {
+                    "name": "Iocaste"
+                },
+                {
+                    "name": "S/2003 J 16"
+                },
+                {
+                    "name": "Praxidike"
+                },
+                {
+                    "name": "Harpalyke"
+                },
+                {
+                    "name": "Mneme"
+                },
+                {
+                    "name": "Hermippe"
+                },
+                {
+                    "name": "Thyone"
+                },
+                {
+                    "name": "Ananke"
+                },
+                {
+                    "name": "Herse"
+                },
+                {
+                    "name": "Aitne"
+                },
+                {
+                    "name": "Kale"
+                },
+                {
+                    "name": "Taygete"
+                },
+                {
+                    "name": "S/2003 J 19"
+                },
+                {
+                    "name": "Chaldene"
+                },
+                {
+                    "name": "S/2003 J 15"
+                },
+                {
+                    "name": "S/2003 J 10"
+                },
+                {
+                    "name": "S/2003 J 23"
+                },
+                {
+                    "name": "Erinome"
+                },
+                {
+                    "name": "Aoede"
+                },
+                {
+                    "name": "Kallichore"
+                },
+                {
+                    "name": "Kalyke"
+                },
+                {
+                    "name": "Carme"
+                },
+                {
+                    "name": "Callirrhoe"
+                },
+                {
+                    "name": "Eurydome"
+                },
+                {
+                    "name": "S/2011 J 2"
+                },
+                {
+                    "name": "Pasithee"
+                },
+                {
+                    "name": "S/2010 J 1"
+                },
+                {
+                    "name": "Kore"
+                },
+                {
+                    "name": "Cyllene"
+                },
+                {
+                    "name": "Eukelade"
+                },
+                {
+                    "name": "S/2003 J 4"
+                },
+                {
+                    "name": "Pasiphaë"
+                },
+                {
+                    "name": "Hegemone"
+                },
+                {
+                    "name": "Arche"
+                },
+                {
+                    "name": "Isonoe"
+                },
+                {
+                    "name": "S/2003 J 9"
+                },
+                {
+                    "name": "S/2003 J 5"
+                },
+                {
+                    "name": "Sinope"
+                },
+                {
+                    "name": "Sponde"
+                },
+                {
+                    "name": "Autonoe"
+                },
+                {
+                    "name": "Megaclite"
+                },
+                {
+                    "name": "S/2003 J 2"
+                }
+            ],
+            "gravity": 24.79,
+            "aphelion":  816520800,
+            "perihelion":  740573600,
+            "orbital_period": 4332.59,
+            "orbital_speed": 47052,
+            "radius": 71492,
+            "mass": 1.8986e+27,
+            "rotation_period": 9.925,
+            "rotation_velocity": 45300,
+            "min_temperature": 0,
+            "max_temperature": 0,
+            "atmosphere": {
+                "pressure": 200,
+                "composition":{
+                    "H2": 89.8,
+                    "He": 10.2,
+                    "CH4": 0.3,
+                    "NH3": 0.026,
+                    "HD": 0.003,
+                    "C2H6": 0.00006,
+                    "H2O": 0.00004
+                }
+            }
         },
         {
             "name": "Saturn",
-            "orbital_speed": 9.69,
+            "satellites": [
+                {
+                    "name": "S/2009 S 1"
+                },
+                {
+                    "name": "moonlets"
+                },
+                {
+                    "name": "Pan"
+                },
+                {
+                    "name": "Daphnis"
+                },
+                {
+                    "name": "Atlas"
+                },
+                {
+                    "name": "Prometheus"
+                },
+                {
+                    "name": "Pandora"
+                },
+                {
+                    "name": "Epimetheus"
+                },
+                {
+                    "name": "Janus"
+                },
+                {
+                    "name": "Aegaeon"
+                },
+                {
+                    "name": "Mimas"
+                },
+                {
+                    "name": "Methone"
+                },
+                {
+                    "name": "Anthe"
+                },
+                {
+                    "name": "Pallene"
+                },
+                {
+                    "name": "Enceladus"
+                },
+                {
+                    "name": "Tethys"
+                },
+                {
+                    "name": "Telesto"
+                },
+                {
+                    "name": "Calypso"
+                },
+                {
+                    "name": "Dione"
+                },
+                {
+                    "name": "Helene"
+                },
+                {
+                    "name": "Polydeuces"
+                },
+                {
+                    "name": "Rhea"
+                },
+                {
+                    "name": "Titan"
+                },
+                {
+                    "name": "Hyperion"
+                },
+                {
+                    "name": "Iapetus"
+                },
+                {
+                    "name": "Kiviuq"
+                },
+                {
+                    "name": "Ijiraq"
+                },
+                {
+                    "name": "Phoebe"
+                },
+                {
+                    "name": "Paaliaq"
+                },
+                {
+                    "name": "Skathi"
+                },
+                {
+                    "name": "Albiorix"
+                },
+                {
+                    "name": "S/2007 S 2"
+                },
+                {
+                    "name": "Bebhionn"
+                },
+                {
+                    "name": "Erriapus"
+                },
+                {
+                    "name": "Skoll"
+                },
+                {
+                    "name": "Siarnaq"
+                },
+                {
+                    "name": "Tarqeq"
+                },
+                {
+                    "name": "S/2004 S 13"
+                },
+                {
+                    "name": "Greip"
+                },
+                {
+                    "name": "Hyrrokkin"
+                },
+                {
+                    "name": "Jarnsaxa"
+                },
+                {
+                    "name": "Tarvos"
+                },
+                {
+                    "name": "Mundilfari"
+                },
+                {
+                    "name": "S/2006 S 1"
+                },
+                {
+                    "name": "S/2004 S 17"
+                },
+                {
+                    "name": "Bergelmir"
+                },
+                {
+                    "name": "Narvi"
+                },
+                {
+                    "name": "Suttungr"
+                },
+                {
+                    "name": "Hati"
+                },
+                {
+                    "name": "S/2004 S 12"
+                },
+                {
+                    "name": "Farbauti"
+                },
+                {
+                    "name": "Thrymr"
+                },
+                {
+                    "name": "Aegir"
+                },
+                {
+                    "name": "S/2007 S 3"
+                },
+                {
+                    "name": "Bestla"
+                },
+                {
+                    "name": "S/2004 S 7"
+                },
+                {
+                    "name": "S/2006 S 3"
+                },
+                {
+                    "name": "Fenrir"
+                },
+                {
+                    "name": "Surtur"
+                },
+                {
+                    "name": "Kari"
+                },
+                {
+                    "name": "Ymir"
+                },
+                {
+                    "name": "Loge"
+                },
+                {
+                    "name": "Fornjot"
+                }
+            ],
+            "gravity": 10.44,
+            "aphelion":  1513325783,
+            "perihelion":  1353572956,
+            "orbital_period": 10759.22,
+            "orbital_speed": 34884,
+            "radius": 60268,
+            "mass": 5.6846e+26,
+            "rotation_period": 378.09,
+            "rotation_velocity": 35500,
+            "min_temperature": -139,
+            "max_temperature": -139,
+            "atmosphere": {
+                "pressure": 0,
+                "composition":{
+                    "H2": 96,
+                    "He": 3,
+                    "CH4": 0.4,
+                    "NH3": 0.01,
+                    "HD": 0.01
+                }
+            },
             "rings":[
+                {"name":"D Ring", "from": 66900, "to":74510},
+                {"name":"C Ring", "from": 74658, "to":92000},
+                {"name":"B Ring", "from": 92000, "to":117580},
+                {"name":"Cassini Division","from": 117580, "to":122170},
+                {"name":"A Ring", "from": 122170, "to":136775},
+                {"name":"Roche Division", "from": 136775, "to":139380},
+                {"name":"F Ring", "from": 140180, "to":140210},
+                {"name":"Janus/Epimetheus Ring", "from": 149000, "to":154000},
+                {"name":"G Ring", "from": 166000, "to":175000},
+                {"name":"Methone Ring Arc", "from": 194230, "to":194730},
+                {"name":"Anthe Ring Arc", "from": 197665, "to":198465},
+                {"name":"Pallene Ring", "from": 211000, "to":213500},
+                {"name":"E Ring", "from": 180000, "to":480000},
+                {"name":"Phoebe Ring", "from": 4000000, "to":13000000}
             ]
         },
         {
             "name": "Uranus",
-            "orbital_speed": 6.81
+            "satellites": [
+                {
+                    "name": "Cordelia"
+                },
+                {
+                    "name": "Ophelia"
+                },
+                {
+                    "name": "Bianca"
+                },
+                {
+                    "name": "Cressida"
+                },
+                {
+                    "name": "Desdemona"
+                },
+                {
+                    "name": "Juliet"
+                },
+                {
+                    "name": "Portia"
+                },
+                {
+                    "name": "Rosalind"
+                },
+                {
+                    "name": "Cupid"
+                },
+                {
+                    "name": "Belinda"
+                },
+                {
+                    "name": "Perdita"
+                },
+                {
+                    "name": "Puck"
+                },
+                {
+                    "name": "Mab"
+                },
+                {
+                    "name": "Miranda"
+                },
+                {
+                    "name": "Ariel"
+                },
+                {
+                    "name": "Umbriel"
+                },
+                {
+                    "name": "Titania"
+                },
+                {
+                    "name": "Oberon"
+                },
+                {
+                    "name": "Francisco"
+                },
+                {
+                    "name": "Caliban"
+                },
+                {
+                    "name": "Stephano"
+                },
+                {
+                    "name": "Trinculo"
+                },
+                {
+                    "name": "Sycorax"
+                },
+                {
+                    "name": "Margaret"
+                },
+                {
+                    "name": "Prospero"
+                },
+                {
+                    "name": "Setebos"
+                },
+                {
+                    "name": "Ferdinand"
+                }
+            ],
+            "gravity": 8.69,
+            "aphelion": 3004419704,
+            "perihelion": 2748938461,
+            "orbital_period": 30799.095,
+            "orbital_speed": 24516,
+            "radius": 25559,
+            "mass": 8.6810e+25,
+            "rotation_period": 0.71833,
+            "rotation_velocity": 9320,
+            "min_temperature": -224,
+            "max_temperature": -216,
+            "atmosphere": {
+                "pressure": 0,
+                "composition":{
+                    "H2": 83,
+                    "He": 15,
+                    "CH4": 2.3
+                }
+            },
+            "rings":[
+                {"name":"ζcc", "from": 26840, "width": 8000},
+                {"name":"ζc", "from": 34890, "width": 3000},
+                {"name":"1986U2R", "from": 37000, "width":2500},
+                {"name":"ζ", "from": 37850, "width":3500},
+                {"name":"6", "from": 41837, "width":1.6},
+                {"name":"5", "from": 42234, "width":1.9},
+                {"name":"4", "from": 42570, "width":2.4},
+                {"name":"α", "from": 44718, "width":4.8},
+                {"name":"β", "from": 45661, "width":6.1},
+                {"name":"η", "from": 47175, "width":1.9},
+                {"name":"ηc", "from": 47176, "width":40},
+                {"name":"γ", "from": 47627, "width":3.6},
+                {"name":"δc", "from": 48300, "width":10},
+                {"name":"δ", "from": 48300, "width":4.1},
+                {"name":"λ", "from": 50023, "width":2},
+                {"name":"ε", "from": 51149, "width":19.7},
+                {"name":"ν", "from": 66100, "width":3800},
+                {"name":"μ", "from": 86000, "width":17000}
+            ]
         },
         {
             "name": "Neptune",
-            "orbital_speed": 5.43
+            "satellites": [
+                {
+                    "name": "Naiad"
+                },
+                {
+                    "name": "Thalassa"
+                },
+                {
+                    "name": "Despina"
+                },
+                {
+                    "name": "Galatea"
+                },
+                {
+                    "name": "Larissa"
+                },
+                {
+                    "name": "S/2004 N 1"
+                },
+                {
+                    "name": "Proteus"
+                },
+                {
+                    "name": "Triton"
+                },
+                {
+                    "name": "Nereid"
+                },
+                {
+                    "name": "Halimede"
+                },
+                {
+                    "name": "Sao"
+                },
+                {
+                    "name": "Laomedeia"
+                },
+                {
+                    "name": "Psamathe"
+                },
+                {
+                    "name": "Neso"
+                }
+            ],
+            "gravity": 11.15,
+            "aphelion":  4553946490,
+            "perihelion":  4452940833,
+            "orbital_period": 60190.03,
+            "orbital_speed": 19548,
+            "radius": 24764,
+            "mass": 1.0243e+26,
+            "rotation_period": 0.6713,
+            "rotation_velocity": 9660,
+            "min_temperature": -221,
+            "max_temperature": -201,
+            "atmosphere": {
+                "pressure": 0,
+                "composition":{
+                    "H2": 80,
+                    "He": 19,
+                    "CH4": 1.5
+                }
+            },
+            "rings":[
+                {"name":"Galle (N42)", "from": 40900, "width": 2000},
+                {"name":"Le Verrier (N53)", "from": 53200, "width": 113},
+                {"name":"Lassell", "from": 53200, "width": 4000},
+                {"name":"Arago", "from": 57200, "width": 100},
+                {"name":"Adams (N63)", "from": 62932, "width": 30}
+            ]
         }
     ],
     "asteroids" : [
