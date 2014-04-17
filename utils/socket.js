@@ -1,5 +1,6 @@
 var log = require('utils/log')(module);
-var balance = require('balance');
+//var balance = require('balance');
+var config = require('config');
 
 module.exports = function(server){
     var io = require('socket.io').listen(server);
@@ -14,8 +15,7 @@ module.exports = function(server){
             socket.broadcast.emit('message', text);
             callback();
         });
-
-        var data = {star: balance.get('star'), planets: balance.get('planets')};
+        var data = {star: config.get_parameter('star'), planets: config.get_parameter('planets')};
         socket.emit('server_data', data);
 
         /*

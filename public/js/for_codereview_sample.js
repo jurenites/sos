@@ -59,7 +59,7 @@
             // On my signal: Unleash hell.
             (function hell() {
                 loop.step();
-                loop.update();
+                world.update();
                 if (debug) {
                     world.DrawDebugData();
                 }

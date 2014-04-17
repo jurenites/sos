@@ -19,7 +19,9 @@ app.use(express.favicon('public/images/favicon.ico'));
 
 app.use(express.logger( (app.get('env') == 'development') ? 'dev' :'default'));
 
-app.use(express.bodyParser());
+//app.use(express.bodyParser());
+app.use(express.json());
+app.use(express.urlencoded());
 
 app.use(express.cookieParser(config.get('session:secret')));
 
