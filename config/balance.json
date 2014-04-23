@@ -28,11 +28,14 @@
         {
             "name": "Mercury",
             "gravity": 3.7,
+
             "aphelion": 69816900 ,
             "perihelion": 46001200 ,
+
+            "orbit": 57950000000,
             "orbital_period": 87.969,
             "orbital_speed": 172332,
-            "radius": 2439700,
+            "radius": 2833000,
             "mass": 3.33022e+23,
             "rotation_period": 1407.5 ,
             "rotation_velocity": 10.892,
@@ -66,8 +69,11 @@
                 }
             ],
             "gravity": 8.87,
+
             "aphelion":  108942109,
             "perihelion": 107476259,
+
+            "orbit": 108110000000,
             "orbital_period": 224.701,
             "orbital_speed": 126072,
             "radius": 6051800,
@@ -101,8 +107,11 @@
                 }
             ],
             "gravity": 9.8, "surface_gravity_measurement": "ms2",
+
             "aphelion": 152098232000, "farest_distance_to_sun": "km",
             "perihelion": 147098290000, "min_distance_radius": "from star to earth",
+
+            "orbit": 149570000000,
             "orbital_period": 365,"period": "days",
             "orbital_speed": 107200,"linear_speed": "km/h",
             "radius": 6378100,
@@ -151,8 +160,12 @@
                 }
             ],
             "gravity": 3.711,
+
             "aphelion":  249209300 ,
             "perihelion":  206669000,
+
+            "orbit": 227840000000,
+
             "orbital_period": 686.971,
             "orbital_speed": 86677.2,
             "radius": 3396200,
@@ -378,8 +391,10 @@
                 }
             ],
             "gravity": 24.79,
+
             "aphelion":  816520800,
             "perihelion":  740573600,
+            "orbit": 778140000,
             "orbital_period": 4332.59,
             "orbital_speed": 47052,
             "radius": 71492,
@@ -595,8 +610,11 @@
                 }
             ],
             "gravity": 10.44,
+
             "aphelion":  1513325783,
             "perihelion":  1353572956,
+
+            "orbit": 1427000000,
             "orbital_period": 10759.22,
             "orbital_speed": 34884,
             "radius": 60268,
@@ -718,8 +736,11 @@
                 }
             ],
             "gravity": 8.69,
+
             "aphelion": 3004419704,
             "perihelion": 2748938461,
+
+            "orbit": 2870300000,
             "orbital_period": 30799.095,
             "orbital_speed": 24516,
             "radius": 25559,
@@ -737,24 +758,24 @@
                 }
             },
             "rings":[
-                {"name":"?cc", "from": 26840, "width": 8000},
-                {"name":"?c", "from": 34890, "width": 3000},
+                {"name":"ζcc", "from": 26840, "width": 8000},
+                {"name":"ζc", "from": 34890, "width": 3000},
                 {"name":"1986U2R", "from": 37000, "width":2500},
-                {"name":"?", "from": 37850, "width":3500},
+                {"name":"ζ", "from": 37850, "width":3500},
                 {"name":"6", "from": 41837, "width":1.6},
                 {"name":"5", "from": 42234, "width":1.9},
                 {"name":"4", "from": 42570, "width":2.4},
-                {"name":"?", "from": 44718, "width":4.8},
-                {"name":"?", "from": 45661, "width":6.1},
-                {"name":"?", "from": 47175, "width":1.9},
-                {"name":"?c", "from": 47176, "width":40},
-                {"name":"?", "from": 47627, "width":3.6},
-                {"name":"?c", "from": 48300, "width":10},
-                {"name":"?", "from": 48300, "width":4.1},
-                {"name":"?", "from": 50023, "width":2},
-                {"name":"?", "from": 51149, "width":19.7},
-                {"name":"?", "from": 66100, "width":3800},
-                {"name":"?", "from": 86000, "width":17000}
+                {"name":"α", "from": 44718, "width":4.8},
+                {"name":"β", "from": 45661, "width":6.1},
+                {"name":"η", "from": 47175, "width":1.9},
+                {"name":"ηc", "from": 47176, "width":40},
+                {"name":"γ", "from": 47627, "width":3.6},
+                {"name":"δc", "from": 48300, "width":10},
+                {"name":"δ", "from": 48300, "width":4.1},
+                {"name":"λ", "from": 50023, "width":2},
+                {"name":"ε", "from": 51149, "width":19.7},
+                {"name":"ν", "from": 66100, "width":3800},
+                {"name":"μ", "from": 86000, "width":17000}
             ]
         },
         {
@@ -804,8 +825,11 @@
                 }
             ],
             "gravity": 11.15,
+
             "aphelion":  4553946490,
             "perihelion":  4452940833,
+
+            "orbit": 4499900000,
             "orbital_period": 60190.03,
             "orbital_speed": 19548,
             "radius": 24764,
@@ -829,6 +853,25 @@
                 {"name":"Arago", "from": 57200, "width": 100},
                 {"name":"Adams (N63)", "from": 62932, "width": 30}
             ]
+        }
+    ],
+    "planetoids" : [
+        {
+            "name": "Pluto",
+            "gravity": 0,
+
+            "aphelion":  7311000000000,
+            "perihelion":  4437000000000,
+
+            "orbit": 5913000000,
+            "orbital_period": 90465,
+            "orbital_speed": 16920,
+            "radius": 1137,
+            "mass": 1.27e22,
+            "rotation_period": -6.387,
+            "rotation_velocity": 47.18,
+            "min_temperature": -229,
+            "max_temperature": -220
         }
     ],
     "asteroids" : [

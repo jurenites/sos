@@ -52,12 +52,15 @@ powered by:
         var ROTATION_SHIP_SPEED = 2;
         var ROTATION_SHIP_SPEED_LIMIT = 4;
 
+        var CENTER_SYSTEM_X = 100000000000;
+        var CENTER_SYSTEM_Y = 50000000000;
+
         /**
          * meters in pixel by default
          */
-        var SCALE = 0.00000005;
+        var SCALE = 10;
 
-        var MIN_SCALE_SIZE = 0.00000005;
+        var MIN_SCALE_SIZE = 0.00000001;
 
         var MAX_SCALE_SIZE = 30;
 
@@ -71,6 +74,13 @@ powered by:
         var POSITION_ITERATIONS = 10;
 
         var SCROLL_SPEED = 20; //in %
+
+        /**
+         * Debug data
+         */
+        var stats
+
+        var I = 0;
 
         /**
          * Init som useful stuff for easier access (don't need 'em all)
@@ -91,7 +101,12 @@ powered by:
         /**
          * Mouse activity variables
          */
-        var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
+        var mouse_x;
+        var mouse_y;
+        var mousePVec;
+        var is_mouse_down;
+        var selectedBody;
+        var mouseJoint;
 
         /**
          * Keyboard activity variable
@@ -111,6 +126,11 @@ powered by:
         var canvasPosition
 
         /**
+         * canvas object
+         */
+        var context = {}
+
+        /**
          * on load page
          */
         document.addEventListener('DOMContentLoaded',function(){
@@ -120,33 +140,31 @@ powered by:
             socket
 
                     .on('message', function (message) {
-                        console.log(message);
+                        console.log('message:'+message);
                         //socket.emit('my other event', { my: 'data' });
                     })
                     .on('server_data', function(data){
                         init.draw.solar_system_objects(world, data);
                     })
                     .on('connect', function(){
-                        console.log('connect');
+                        console.log('socket connect');
 
                         if(typeof Stats != 'undefined'){
-                            var stats = new Stats();
+                            stats = new Stats();
                             stats.setMode(0);
                             stats.domElement.style.position = 'absolute';
-                            stats.domElement.style.left = '0px';
+                            stats.domElement.style.right = '0px';
                             stats.domElement.style.top = '0px';
 
                             document.body.appendChild( stats.domElement );
-                            stats.begin();
+
                         }
                         init.start(DOM_OBJ_ID);
-                        if(typeof Stats != 'undefined'){
-                            stats.end();
-                        }
+
 
                     })
                     .on('disconnect', function(){
-                        console.log('disconnect');
+                        console.log('socket disconnect');
                         setTimeout(reconnect,500)
                     });
             /**
@@ -198,18 +216,18 @@ powered by:
                     //@todo: refactor code!
                     //mouse
                     dom_obj = document.getElementById(DOM_OBJ_ID);
+                    context = dom_obj.getContext("2d");
 
                     box2d.create.world();
                     this.set_fullscreen(dom_obj);
 
                     ship = this.draw.ship(world, 4,4,0.5);
+                    ship.SetUserData('space_ship')
 
                     this.draw.rand_object(world);
                     this.draw.nav_grid(world);
 
-
                     this.callbacks();
-
                     //setup debug draw
                     if (DEBUG){
                         this.draw.debug_view(dom_obj, world);
@@ -219,12 +237,23 @@ powered by:
                     canvasPosition = getElementPosition(dom_obj);
 
                     (function hell() {
+                        if(typeof Stats != 'undefined'){
+                            stats.begin();
+                        }
                         loop.step();
                         loop.update();
                         if (DEBUG) {
+                            console.log('scale:'+scale);
+                            debugDraw.SetDrawScale(scale);
+                            //world.DrawString(5, 15, "Now we have a foo test");
                             world.DrawDebugData();
+
                         }
+                        init.draw.createTextField();
                         loop.draw();
+                        if(typeof Stats != 'undefined'){
+                            stats.end();
+                        }
                         requestAnimFrame(hell);
                     })();
                 },
@@ -233,6 +262,11 @@ powered by:
                      *
                      */
                     createTextField: function(){
+
+                        context.font="5px 4pixel";
+                        context.fillStyle="#fff";
+                        context.fillText("Hello World!",50,50);
+                        /*
                         var textField = new TextField();
                         textField.defaultTextFormat = new TextFormat("4pixel", 14, 0xdbdbdb, true,null,null,null,null,"left");
                         textField.selectable = false;
@@ -241,7 +275,7 @@ powered by:
                         textField.text = 'some text';
                         addChild(textField);
                         textField.x = 20;
-                        textField.y = 20;
+                        textField.y = 20;*/
                     },
                     /**
                      *
@@ -268,7 +302,7 @@ powered by:
                     },
                     debug_view: function(dom_obj, world){
                         debugDraw = new b2DebugDraw();
-                        debugDraw.SetSprite(dom_obj.getContext("2d"));
+                        debugDraw.SetSprite(context);
                         debugDraw.SetDrawScale(scale);
                         debugDraw.SetFillAlpha(0.5);
                         debugDraw.SetLineThickness(1.0);
@@ -306,7 +340,7 @@ powered by:
                         //fixDef.shape = new b2PolygonShape();
                         //fixDef.shape.SetAsEdge( new b2Vec2(10,10) , new b2Vec2(10,10) );
                         fixDef.shape = new b2CircleShape(2);
-                        bodyDef.position.Set(20, 20);
+                        bodyDef.position.Set(-1, -1);
                         world.CreateBody(bodyDef).CreateFixture(fixDef);
                     },
                     solar_system_objects: function(world, data){
@@ -316,29 +350,24 @@ powered by:
                         if (data.star != undefined) {
                             bodyDef.type = b2Body.b2_staticBody;
                             fixDef.shape = new b2CircleShape(data.star.radius);
-                            bodyDef.position.Set(10000.00 + data.star.radius, 100000.00 + data.star.radius);
+
+                            bodyDef.position.Set(CENTER_SYSTEM_X, CENTER_SYSTEM_Y);
                             world.CreateBody(bodyDef).CreateFixture(fixDef);
                         }
 
                         //create planets
                         if (data.planets != undefined) {
-                            console.log(data.planets);
                             for (planetoit_id in data.planets) {
                                 //create planets
                                 if (data.planets[planetoit_id].perihelion != undefined) {
-                                    console.log(data.planets[planetoit_id].name);
                                     bodyDef.type = b2Body.b2_staticBody;
                                     fixDef.shape = new b2CircleShape(data.planets[planetoit_id].radius);
-                                    bodyDef.position.Set(100000.00 + data.star.radius * 2 + data.planets[planetoit_id].perihelion, 100000.00 + data.star.radius);
+                                    bodyDef.position.Set(CENTER_SYSTEM_X  + data.planets[planetoit_id].orbit, CENTER_SYSTEM_Y);
                                     world.CreateBody(bodyDef).CreateFixture(fixDef);
                                 }
                             }
                         }
                     }
-                },
-                canvas: function(id) {
-                    canvas = document.getElementById(id);
-                    ctx = canvas.getContext("2d");
                 },
                 /**
                  * Resize the dom element
@@ -365,7 +394,7 @@ powered by:
                      * Mouse pressed
                      */
                     document.addEventListener("mousedown", function (e) {
-                        isMouseDown = true;
+                        is_mouse_down = true;
                         handlers.mouse_move(e);
                         document.addEventListener("mousemove", handlers.mouse_move, true);
                     }, true);
@@ -375,10 +404,15 @@ powered by:
                      */
                     document.addEventListener("mouseup", function () {
                         document.removeEventListener("mousemove", handlers.mouse_move, true);
-                        isMouseDown = false;
-                        mouseX = undefined;
-                        mouseY = undefined;
+                        is_mouse_down = false;
+                        mouse_x = undefined;
+                        mouse_y = undefined;
                     }, true);
+
+                    document.addEventListener('mousemove', function(e) {
+                        handlers.mouse_move(e);
+                    }, false);
+
 
                     /**
                      * Keyboard pressed
@@ -403,6 +437,111 @@ powered by:
                 }
         };
 
+        /**
+         * Box2dweb update function for redraw content
+         */
+        var loop = {
+            step: function() {
+
+                //options: frame-rate, velocity iterations, position iterations
+                world.Step(1 / FRAME_RATE, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+                world.ClearForces();
+
+/*
+                var world_ship_pos = ship.GetBody().GetPosition();
+                //cur position top left corner
+                var canvas_ship_x = world_ship_pos.x * scale;
+
+                var trans_x = (context.canvas.width - canvas_ship_x) / scale;
+                var trans_y = 0;
+context.clearRect( -100, -100, context.canvas.width, context.canvas.height);
+                if(I < 100){
+                    I++
+//console.log(canvas_ship_x);
+                //trans_x = 1;
+                //context.translate(trans_x, trans_y);
+                context.translate(10, 10);
+//context.rotate(ship.GetAngle());
+                }else if(I == 100){
+                    I++
+                    context.translate(-100, -100);
+                }
+ */
+                /*
+                 for(var b = world.m_bodyList; b != null; b = b.m_next){
+                 if(b.GetUserData() == 'spaceship'){
+                 context.save();
+                 context.translate(b.GetPosition().x*worldScale,b.GetPosition().y*worldScale);
+                 context.rotate(b.GetAngle());
+                 context.drawImage(b.GetUserData(),-b.GetUserData().width/2,-b.GetUserData().height/2);
+                 context.restore();
+                 }
+                 }
+                 */
+                /*
+                if(!DEBUG){
+
+                    debugDraw.SetDrawScale(scale);
+                    world.DrawDebugData();
+
+                }*/
+                context.clearRect( -100, -100, context.canvas.width, context.canvas.height);
+            },
+            update: function () {
+                /**/
+                for (var b = world.GetBodyList(); b; b = b.m_next) {
+                    if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() != null) {
+                        shapes[b.GetUserData()].update(box2d.get.bodySpec(b));
+                    }
+                }
+                /**/
+
+                    //friction for rotating ship
+                friction_rotating_ship();
+
+                for(i in pressed) {
+                    handlers.key_pressed(i);
+                }
+
+                //set
+                if (is_mouse_down && (!mouseJoint)) {
+                    var body = getBodyAtMouse();
+                    if (body) {
+                        var md = new b2MouseJointDef();
+                        md.bodyA = world.GetGroundBody();
+                        md.bodyB = body;
+                        md.target.Set(mouse_x, mouse_y);
+                        md.collideConnected = true;
+                        md.maxForce = 200.0 * body.GetMass();
+                        mouseJoint = world.CreateJoint(md);
+                        body.SetAwake(true);
+                    }
+                }
+
+                if (mouseJoint) {
+                    if (is_mouse_down) {
+                        mouseJoint.SetTarget(new b2Vec2(mouse_x, mouse_y));
+                    } else {
+                        world.DestroyJoint(mouseJoint);
+                        mouseJoint = null;
+                    }
+                }
+            },
+            draw: function() {
+                /*
+                 ctx.save();
+                 ctx.translate(-1*xpos+(640/2),-1*ypos+(480/2));
+                 ctx.rotate(0.2);
+                 ctx.drawImage(carSprite, -carspritewidth/2, -carspriteheight/2);
+                 ctx.restore();
+                 */
+                /*
+                 for (var i in shapes) {
+                 shapes[i].draw();
+                 }
+                 */
+            }
+        };
 
         var box2d = {
             addToWorld: function(shape) {
@@ -426,7 +565,7 @@ powered by:
                     world.SetGravity(new b2Vec2(0, GLOBAL_GRAVITY));
                 },
                 defaultFixture: function() {
-                    fixDef = new b2FixtureDef;
+                    var fixDef = new b2FixtureDef;
                     fixDef.density = 1.0;
                     fixDef.friction = 0.5;
                     fixDef.restitution = 0.2;
@@ -487,8 +626,8 @@ powered by:
              * @param e
              */
             mouse_move: function(e) {
-                mouseX = (e.clientX - canvasPosition.x) / scale;
-                mouseY = (e.clientY - canvasPosition.y) / scale;
+                mouse_x = (e.clientX - canvasPosition.x) / scale;
+                mouse_y = (e.clientY - canvasPosition.y) / scale;
             },
 
             /**
@@ -575,7 +714,6 @@ powered by:
             var method = (false) ? 'ApplyForce' : 'ApplyImpulse';
             var r = body.GetAngle();
             //try to get speed of the object
-            //console.log(body.GetLinearVelocityFromWorldPoint(new b2Vec2(0,0)));
             var force = new b2Vec2(Math.cos( r + (degrees * Math.PI / 180) ), Math.sin( r + (degrees * Math.PI / 180)));
             body[method](force, body.GetPosition());
         }
@@ -585,10 +723,10 @@ powered by:
          * @returns {null}
          */
         function getBodyAtMouse() {
-            mousePVec = new b2Vec2(mouseX, mouseY);
+            mousePVec = new b2Vec2(mouse_x, mouse_y);
             var aabb = new b2AABB();
-            aabb.lowerBound.Set(mouseX - 0.001, mouseY - 0.001);
-            aabb.upperBound.Set(mouseX + 0.001, mouseY + 0.001);
+            aabb.lowerBound.Set(mouse_x - 0.001, mouse_y - 0.001);
+            aabb.upperBound.Set(mouse_x + 0.001, mouse_y + 0.001);
 
             // Query the world for overlapping shapes.
             selectedBody = null;
@@ -611,69 +749,7 @@ powered by:
             return true;
         }
 
-            /**
-             * Box2dweb update function for redraw content
-             */
-            var loop = {
-                step: function() {
-                    //options: frame-rate, velocity iterations, position iterations
-                    world.Step(1 / FRAME_RATE, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-                    if(DEBUG){
-                        debugDraw.SetDrawScale(scale);
-                        world.DrawDebugData();
-                    }
-                    world.ClearForces();
-                },
-                update: function () {
-/**/
-                    for (var b = world.GetBodyList(); b; b = b.m_next) {
-                        if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() != null) {
-                            shapes[b.GetUserData()].update(box2d.get.bodySpec(b));
-                        }
-                    }
-/**/
 
-                    //friction for rotating ship
-                    friction_rotating_ship();
-
-                    for(i in pressed) {
-                        handlers.key_pressed(i);
-                    }
-
-                    //set
-                    if (isMouseDown && (!mouseJoint)) {
-                        var body = getBodyAtMouse();
-                        if (body) {
-                            var md = new b2MouseJointDef();
-                            md.bodyA = world.GetGroundBody();
-                            md.bodyB = body;
-                            md.target.Set(mouseX, mouseY);
-                            md.collideConnected = true;
-                            md.maxForce = 200.0 * body.GetMass();
-                            mouseJoint = world.CreateJoint(md);
-                            body.SetAwake(true);
-                        }
-                    }
-
-                    if (mouseJoint) {
-                        if (isMouseDown) {
-                            mouseJoint.SetTarget(new b2Vec2(mouseX, mouseY));
-                        } else {
-                            world.DestroyJoint(mouseJoint);
-                            mouseJoint = null;
-                        }
-                    }
-                },
-                draw: function() {
-/*
-                    if (!DEBUG) ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                    for (var i in shapes) {
-                        shapes[i].draw();
-                    }
-*/
-                }
-            };
 
             /**
              *
@@ -725,8 +801,6 @@ powered by:
                 }
                 return {x: x, y: y};
             }
-
-
 
     </script>
 </head>
