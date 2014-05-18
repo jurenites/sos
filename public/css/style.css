@@ -1,10 +1,10 @@
 @font-face {
     font-family: '4pixel';
-    src: url('../fonts/4pixel.eot'); /* IE9 Compat Modes */
-    src: url('../fonts/4pixel.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('../fonts/4pixel.woff') format('woff'), /* Modern Browsers */
-    url('../fonts/4pixel.ttf')  format('truetype'), /* Safari, Android, iOS */
-    url('../fonts/4pixel.svg#svgFontName') format('svg'); /* Legacy iOS */
+    src: url('../fonts/4pixel_2.eot'); /* IE9 Compat Modes */
+    src: url('../fonts/4pixel_2.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/4pixel_2.woff') format('woff'), /* Modern Browsers */
+    url('../fonts/4pixel_2.ttf')  format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/4pixel_2.svg#svgFontName') format('svg'); /* Legacy iOS */
 }
 html{
     height: 100%;
@@ -18,7 +18,7 @@ body
     font-size: 10px;
     min-height: 100%;
 }
-canvas#canvas{
+canvas#game{
     background-color: #111;
     margin: 0 auto;
     display: block;
