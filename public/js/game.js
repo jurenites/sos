@@ -33,7 +33,8 @@
         ship = {},
         fixDef,
         shapes = {},
-        top_left_corner = {};
+        top_left_corner = {},
+        pressed = {};
 
     var init = {
         start: function(id) {
@@ -42,7 +43,7 @@
 
             box2d.create.world();
             box2d.create.defaultFixture();
-            //ship = user_ship.build(4,4,0.5);
+            ship = user_ship.build(4,4,0.5);
             //@TODO: count rorner according to ship position
             top_left_corner.x = -10;
             top_left_corner.y = -2;
@@ -153,6 +154,15 @@
                 // Firefox
                 document.addEventListener("DOMMouseScroll", handlers.mouse_wheel, false);
             }
+
+            /**
+             * Keyboard pressed
+             */
+            document.addEventListener('keydown', function(e){ pressed[e.keyCode] = true;});
+            /**
+             * Keyboard released
+             */
+            document.addEventListener('keyup', function(e){ delete pressed[e.keyCode]; });
         }
     };        
      
@@ -177,6 +187,13 @@
             var shape = new Box(options);
             shapes[shape.id] = shape;
             box2d.addToWorld(shape);
+        },
+        ship: function(options) {
+            options.user_data = 'ship';
+            var shape = new Circle(options);
+            shapes[shape.id] = shape;
+            box2d.addToWorld(shape);
+            return shape;
         }
     };
 
@@ -250,6 +267,11 @@
             world.ClearForces();
         },
         update: function () {
+            //keyboard
+            console.log(pressed);
+            for(i in pressed) {
+                handlers.key_pressed(i);
+            }
             for (var b = world.GetBodyList(); b; b = b.m_next) {
                 if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() != null) {
                     shapes[b.GetUserData()].update(box2d.get.bodySpec(b));
@@ -267,13 +289,11 @@
                     }
                 }
             }
-            init.draw.text("ZOM : " + (100/SCALE).toFixed(1), 16, (canvas.width/2+70), 20);
-            if(ship.length > 0){
-            var position = ship.GetBody().GetPosition();
-                init.draw.text("POS X : " + Math.round(position.x,2), 16, (canvas.width/2-50), 20);
-                init.draw.text("POS Y : " + Math.round(position.y,2), 16, (canvas.width/2-50), 40);
+            init.draw.text("ZOM : " + (SCALE).toFixed(1), 16, (canvas.width/2+70), 20);
+            if(typeof ship != 'undefined'){
+                init.draw.text("POS X : " + Math.round(ship.x,2), 16, (canvas.width/2-50), 20);
+                init.draw.text("POS Y : " + Math.round(ship.y,2), 16, (canvas.width/2-50), 40);
             }
-
         }
     };    
     
@@ -296,15 +316,15 @@
         key_pressed: function(key_code) {
             switch(parseInt(key_code)){
                 case KEY.UP:
-                case KEY.W: move_forward(); break; // w
+                case KEY.W: user_ship.move_forward(); break; // w
                 case KEY.LEFT:
-                case KEY.A: turn_left(); break; // a
+                case KEY.A: user_ship.turn_left(); break; // a
                 case KEY.DOWN:
-                case KEY.S: move_back(); break; // s
+                case KEY.S: user_ship.move_back(); break; // s
                 case KEY.RIGHT:
-                case KEY.D: turn_right(); break; // d
-                case KEY.Q: strafe_left(); break; // q
-                case KEY.E: strafe_right(); break; // e
+                case KEY.D: user_ship.turn_right(); break; // d
+                case KEY.Q: user_ship.strafe_left(); break; // q
+                case KEY.E: user_ship.strafe_right(); break; // e
             }
         },
 
@@ -325,49 +345,61 @@
             var delta = e.detail < 0 || e.wheelDelta > 0 ? 1 : -1;
             if (delta < 0) {
                 // scroll down
-
-                //e.offsetX
-
-                //canvas.width
-                //x: (canvas.width / SCALE) * (e.offsetX / canvas.width) + top_left_corner.x;
+                var e1 = (canvas.width / SCALE) * (e.offsetX / canvas.width);
+                var r1 = (canvas.height / SCALE) * (e.offsetY / canvas.height);
 
                 if(SCALE > MIN_SCALE_SIZE){
-
-                    //predict_top_left_corner.x =
-                    //top_left_corner.x =
-
-                    SCALE -= SCALE / 100 * SCROLL_SPEED;
+                    if(SCALE > 1){
+                        SCALE = (SCALE - 1);
+                    }else{
+                        SCALE = SCALE / (100 / SCROLL_SPEED);
+                    }
                 }
+                var e2 = (canvas.width / SCALE) * (e.offsetX / canvas.width);
+                var r2 = (canvas.height / SCALE) * (e.offsetY / canvas.height);
             } else {
                 // scroll up
+                var e1 = (canvas.width / SCALE) * (e.offsetX / canvas.width);
+                var r1 = (canvas.height / SCALE) * (e.offsetY / canvas.height);
                 if(SCALE < MAX_SCALE_SIZE){
-                    SCALE += SCALE / 100 * SCROLL_SPEED;
-                    SCALE += SCALE / 100 * SCROLL_SPEED;
+                    if(SCALE > 1){
+                        SCALE = (SCALE + 1);
+                    }else{
+                        SCALE = SCALE * (100 / SCROLL_SPEED);
+                    }
                 }
+                var e2 = (canvas.width / SCALE) * (e.offsetX / canvas.width);
+                var r2 = (canvas.height / SCALE) * (e.offsetY / canvas.height);
             }
+            top_left_corner.x = top_left_corner.x - (e2 - e1);
+            top_left_corner.y = top_left_corner.y - (r2 - r1);
+
         }
     };
 
     /* Shapes down here */
     var user_ship = {
         build : function(x, y, r){
-            var fixDef = new b2FixtureDef;
+            /*var fixDef = new b2FixtureDef;
             fixDef.density = 1.0;
             fixDef.friction = 0.5;
             fixDef.restitution = 0.2;
             fixDef.density = 0.1;
-            fixDef.shape = new Circle({x:1,y:1,radius:1});
+            fixDef.shape =*/
+            var shape = add.ship({x:5,y:5});
+            //fixDef.shape = new b2CircleShape(1);
             //fixDef.angularDamping = 0.5;
 
-            var bodyDef = new b2BodyDef;
+            /*var bodyDef = new b2BodyDef;
             bodyDef.type = b2Body.b2_dynamicBody;
             bodyDef.position.x = x;
-            bodyDef.position.y = y;
+            bodyDef.position.y = y;*/
             console.log('add ship');
-            var dynamicBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
+            //world.CreateBody(bodyDef).CreateFixture(fixDef);
+            //var dynamicBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
             //dynamicBody.SetUserData('space_ship');
             //return dynamicBody;
-            //return {}
+            return shape;
         },
         /**
          *
@@ -434,7 +466,20 @@
                 this.move(ship, 90);
             }
         },
-        move: function (obj, degrees) {
+        move: function (inner_ship, degrees) {
+            //console.log(inner_ship);
+            for (var b = world.GetBodyList(); b; b = b.m_next) {
+                if (b.IsActive() && typeof b.GetUserData() !== 'ship' && b.GetUserData() != null) {
+                    console.log(b);
+                    console.log(inner_ship);
+                    console.log(box2d.get.bodySpec(b).GetAngle());
+                    //shapes[b.GetUserData()].update(box2d.get.bodySpec(b));
+                    //ship.update(bshipySpec(b)); //(box2d.get.bodySpec(b));
+
+                    //console.log(shapes[b.GetUserData()])//.update(box2d.get.bodySpec(b));
+                }
+            }
+
             var body = obj.GetBody();
 
             var method = (false) ? 'ApplyForce' : 'ApplyImpulse';
@@ -445,6 +490,7 @@
         }
     }
     var Shape = function(v) {
+        //todo change to some more reliable than rand
         this.id = Math.round(Math.random() * 1000000);
         this.x = v.x || Math.random()*23 + 1;
         this.y = v.y || 0;

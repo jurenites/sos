@@ -771,6 +771,7 @@ var handlers = {
  *
  */
 function move_forward(){
+
     move(ship, 0);
 }
 
@@ -827,6 +828,8 @@ function strafe_right(){
  * @param degrees
  */
 function move(obj, degrees) {
+    console.log(obj);
+    console.log('move');
     var body = obj.GetBody();
 
     var method = (false) ? 'ApplyForce' : 'ApplyImpulse';
