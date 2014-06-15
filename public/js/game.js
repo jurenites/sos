@@ -43,10 +43,10 @@
 
             box2d.create.world();
             box2d.create.defaultFixture();
-            ship = user_ship.build(4,4,0.5);
-            //@TODO: count rorner according to ship position
-            top_left_corner.x = -10;
-            top_left_corner.y = -2;
+            ship = user_ship.build(0,0,0.5);
+            //@TODO: count corner according to ship position
+            top_left_corner.x = 0;
+            top_left_corner.y = 0;
 
             setTimeout(function() { add.random(); }, 500);
 
@@ -79,9 +79,7 @@
                 var fixDef = new b2FixtureDef;
                 //create star
                 if (data.star != undefined) {
-                    bodyDef.type = b2Body.b2_staticBody;
-                    fixDef.shape = new b2CircleShape(data.star.radius);
-
+                    new Circle({x:CENTER_SYSTEM_X, y: CENTER_SYSTEM_Y, radius: data.star.radius});
                     bodyDef.position.Set(CENTER_SYSTEM_X, CENTER_SYSTEM_Y);
                     console.log('add star');
                     world.CreateBody(bodyDef).CreateFixture(fixDef);
@@ -130,11 +128,13 @@
              * On mouse 1 click
              */
             canvas.addEventListener('click', function(e) {
-                var shapeOptions = {
-                    x: (canvas.width / SCALE) * (e.offsetX / canvas.width) + top_left_corner.x,
-                    y: (canvas.height / SCALE) * (e.offsetY / canvas.height) + top_left_corner.y
-                };
-                add.random(shapeOptions);
+                if(e.button == 0){
+                    var shapeOptions = {
+                        x: (canvas.width / SCALE) * (e.offsetX / canvas.width) + top_left_corner.x,
+                        y: (canvas.height / SCALE) * (e.offsetY / canvas.height) + top_left_corner.y
+                    };
+                    add.random(shapeOptions);
+                }
             }, false);
 
             /**
@@ -154,6 +154,11 @@
                 // Firefox
                 document.addEventListener("DOMMouseScroll", handlers.mouse_wheel, false);
             }
+
+            /**
+             * Mouse move wheel move
+             */
+            document.addEventListener('mousemove', handlers.mouse_move, false);
 
             /**
              * Keyboard pressed
@@ -189,8 +194,8 @@
             box2d.addToWorld(shape);
         },
         ship: function(options) {
-            options.user_data = 'ship';
-            var shape = new Circle(options);
+            options.id = 'ship';
+            var shape = new Box(options);
             shapes[shape.id] = shape;
             box2d.addToWorld(shape);
             return shape;
@@ -268,7 +273,6 @@
         },
         update: function () {
             //keyboard
-            console.log(pressed);
             for(i in pressed) {
                 handlers.key_pressed(i);
             }
@@ -289,10 +293,19 @@
                     }
                 }
             }
-            init.draw.text("ZOM : " + (SCALE).toFixed(1), 16, (canvas.width/2+70), 20);
+            //count left top corner according to ship position
+            var bodies = world.GetBodyList();
+            for(var i = 0; i < world.GetBodyCount(); i++){
+                if (bodies.IsActive() && bodies.GetUserData() == 'ship' && bodies.GetUserData() != null) {
+                    var ship_position = bodies.GetPosition()
+                }
+                bodies = bodies.GetNext();
+            }
+
+            init.draw.text("ZOM : " + (SCALE). toFixed(1), 16, (canvas.width/2+70), 20);
             if(typeof ship != 'undefined'){
-                init.draw.text("POS X : " + Math.round(ship.x,2), 16, (canvas.width/2-50), 20);
-                init.draw.text("POS Y : " + Math.round(ship.y,2), 16, (canvas.width/2-50), 40);
+                init.draw.text("POS X : " + Math.round(ship_position.x,2), 16, (canvas.width/2-50), 20);
+                init.draw.text("POS Y : " + Math.round(ship_position.y,2), 16, (canvas.width/2-50), 40);
             }
         }
     };    
@@ -333,8 +346,35 @@
          * @param e
          */
         mouse_move: function(e) {
-            mouse_x = (e.clientX - canvasPosition.x) / SCALE;
-            mouse_y = (e.clientY - canvasPosition.y) / SCALE;
+            //mouse_x = (e.clientX - canvasPosition.x) / SCALE;
+            //mouse_y = (e.clientY - canvasPosition.y) / SCALE;
+
+            if(e.button == 1){
+                var bodies = world.GetBodyList();
+                for(var i = 0; i < world.GetBodyCount(); i++){
+                    if (bodies.IsActive() && bodies.GetUserData() == 'ship' && bodies.GetUserData() != null) {
+                        var ship_position = bodies.GetPosition()
+                    }
+                    bodies = bodies.GetNext();
+                }
+                var x_position = Math.abs((canvas.width / (canvas.width / SCALE)) * (top_left_corner.x + ship_position.x));
+                if(x_position > e.offsetX){
+                    center_x_px = Math.round(e.offsetX + Math.abs(x_position - e.offsetX ) / 2);
+                }
+                else{
+                    center_x_px = Math.round(e.offsetX - Math.abs(x_position - e.offsetX ) / 2);
+                }
+                top_left_corner.x = top_left_corner.x - ((canvas.width / SCALE) * ((canvas.width / 2) / canvas.width) - (canvas.width / SCALE) * ((center_x_px) / canvas.width));
+
+                var y_position = Math.abs((canvas.height / (canvas.height / SCALE)) * (top_left_corner.y + ship_position.y));
+                if(y_position > e.offsetY){
+                    center_y_px = Math.round(e.offsetY + Math.abs(y_position - e.offsetY ) / 2);
+                }
+                else{
+                    center_y_px = Math.round(e.offsetY - Math.abs(y_position - e.offsetY ) / 2);
+                }
+                top_left_corner.y = top_left_corner.y - ((canvas.height / SCALE) * ((canvas.height / 2) / canvas.height) - (canvas.height / SCALE) * ((center_y_px) / canvas.height));
+            }
         },
 
         /**
@@ -343,10 +383,23 @@
          */
         mouse_wheel: function(e) {
             var delta = e.detail < 0 || e.wheelDelta > 0 ? 1 : -1;
+
+            var bodies = world.GetBodyList();
+            for(var i = 0; i < world.GetBodyCount(); i++){
+                if (bodies.IsActive() && bodies.GetUserData() == 'ship' && bodies.GetUserData() != null) {
+                    var position = bodies.GetPosition();
+                }
+                bodies = bodies.GetNext();
+            }
+
+            if(position){
+                var x = ((canvas.width / (canvas.width / SCALE )) * ( position.x - top_left_corner.x));
+                var y = ((canvas.height / (canvas.height / SCALE )) * ( position.y - top_left_corner.y));
+            }
             if (delta < 0) {
                 // scroll down
-                var e1 = (canvas.width / SCALE) * (e.offsetX / canvas.width);
-                var r1 = (canvas.height / SCALE) * (e.offsetY / canvas.height);
+                var e1 = (canvas.width / SCALE) * (x / canvas.width);
+                var r1 = (canvas.height / SCALE) * (y / canvas.height);
 
                 if(SCALE > MIN_SCALE_SIZE){
                     if(SCALE > 1){
@@ -355,12 +408,12 @@
                         SCALE = SCALE / (100 / SCROLL_SPEED);
                     }
                 }
-                var e2 = (canvas.width / SCALE) * (e.offsetX / canvas.width);
-                var r2 = (canvas.height / SCALE) * (e.offsetY / canvas.height);
+                var e2 = (canvas.width / SCALE) * (x / canvas.width);
+                var r2 = (canvas.height / SCALE) * (y / canvas.height);
             } else {
                 // scroll up
-                var e1 = (canvas.width / SCALE) * (e.offsetX / canvas.width);
-                var r1 = (canvas.height / SCALE) * (e.offsetY / canvas.height);
+                var e1 = (canvas.width / SCALE) * (x / canvas.width);
+                var r1 = (canvas.height / SCALE) * (y / canvas.height);
                 if(SCALE < MAX_SCALE_SIZE){
                     if(SCALE > 1){
                         SCALE = (SCALE + 1);
@@ -368,8 +421,8 @@
                         SCALE = SCALE * (100 / SCROLL_SPEED);
                     }
                 }
-                var e2 = (canvas.width / SCALE) * (e.offsetX / canvas.width);
-                var r2 = (canvas.height / SCALE) * (e.offsetY / canvas.height);
+                var e2 = (canvas.width / SCALE) * (x / canvas.width);
+                var r2 = (canvas.height / SCALE) * (y / canvas.height);
             }
             top_left_corner.x = top_left_corner.x - (e2 - e1);
             top_left_corner.y = top_left_corner.y - (r2 - r1);
@@ -380,25 +433,7 @@
     /* Shapes down here */
     var user_ship = {
         build : function(x, y, r){
-            /*var fixDef = new b2FixtureDef;
-            fixDef.density = 1.0;
-            fixDef.friction = 0.5;
-            fixDef.restitution = 0.2;
-            fixDef.density = 0.1;
-            fixDef.shape =*/
-            var shape = add.ship({x:5,y:5});
-            //fixDef.shape = new b2CircleShape(1);
-            //fixDef.angularDamping = 0.5;
-
-            /*var bodyDef = new b2BodyDef;
-            bodyDef.type = b2Body.b2_dynamicBody;
-            bodyDef.position.x = x;
-            bodyDef.position.y = y;*/
-            console.log('add ship');
-            //world.CreateBody(bodyDef).CreateFixture(fixDef);
-            //var dynamicBody = world.CreateBody(bodyDef).CreateFixture(fixDef);
-            //dynamicBody.SetUserData('space_ship');
-            //return dynamicBody;
+            var shape = add.ship({x:1,y:1});
             return shape;
         },
         /**
@@ -406,7 +441,7 @@
          */
         move_forward: function(){
             if(ship != null){
-                this.move(ship, 0);
+                this.move(0, 1);
             }
         },
 
@@ -414,14 +449,10 @@
          *
          */
         turn_left: function(){
+            //ApplyAngularImpulse
             if(ship != null){
-                ship_body = ship.GetBody();
-                current_angular_velocity = ship_body.GetAngularVelocity();
-                new_angular_velocity = current_angular_velocity - ROTATION_SHIP_SPEED;
-
-                if (ROTATION_SHIP_SPEED_LIMIT > Math.abs(new_angular_velocity)){
-                    ship_body.SetAngularVelocity(new_angular_velocity);
-                }
+                //@TODO: fix angular velocity pover according weight of object
+                this.rotate(-1, 0.8);
             }
         },
 
@@ -430,7 +461,7 @@
          */
         move_back: function(){
             if(ship != null){
-                this.move(ship, 180);
+                this.move(180, 0.5);
             }
         },
 
@@ -439,13 +470,7 @@
          */
         turn_right: function(){
             if(ship != null){
-                ship_body = ship.GetBody();
-                current_angular_velocity = ship_body.GetAngularVelocity();
-                new_angular_velocity = current_angular_velocity + ROTATION_SHIP_SPEED;
-
-                if (ROTATION_SHIP_SPEED_LIMIT > Math.abs(new_angular_velocity)){
-                    ship_body.SetAngularVelocity(new_angular_velocity);
-                }
+                this.rotate(1, 0.8);
             }
         },
 
@@ -454,7 +479,7 @@
          */
         strafe_left: function(){
             if(ship != null){
-                this.move(ship, -90);
+                this.move(-90, 0.2);
             }
         },
 
@@ -463,42 +488,85 @@
          */
         strafe_right: function(){
             if(ship != null){
-                this.move(ship, 90);
+                this.move(90, 0.2);
             }
         },
-        move: function (inner_ship, degrees) {
-            //console.log(inner_ship);
-            for (var b = world.GetBodyList(); b; b = b.m_next) {
-                if (b.IsActive() && typeof b.GetUserData() !== 'ship' && b.GetUserData() != null) {
-                    console.log(b);
-                    console.log(inner_ship);
-                    console.log(box2d.get.bodySpec(b).GetAngle());
-                    //shapes[b.GetUserData()].update(box2d.get.bodySpec(b));
-                    //ship.update(bshipySpec(b)); //(box2d.get.bodySpec(b));
 
-                    //console.log(shapes[b.GetUserData()])//.update(box2d.get.bodySpec(b));
+        /**
+         *
+         */
+        move: function (degrees, power) {
+            var bodies = world.GetBodyList();
+            for(var i = 0; i < world.GetBodyCount(); i++){
+                if (bodies.IsActive() && bodies.GetUserData() == 'ship' && bodies.GetUserData() != null) {
+                    var r = bodies.GetAngle();
+                    var method = (false) ? 'ApplyForce' : 'ApplyImpulse';
+                    var force = new b2Vec2(Math.cos( r + (degrees * Math.PI / 180) ) * power, Math.sin( r + (degrees * Math.PI / 180)) * power);
+                    bodies[method](force, bodies.GetPosition());
+                    bodies.SetLinearDamping(0.8);
                 }
+                bodies = bodies.GetNext();
             }
+        },
+        /**
+         *
+         */
+        rotate: function(a_vel, power){
+            var bodies = world.GetBodyList();
+            for(var i = 0; i < world.GetBodyCount(); i++){
+                if (bodies.IsActive() && bodies.GetUserData() == 'ship' && bodies.GetUserData() != null) {
+                    //@TODO: fix changing angular velocity according current velocity
+                    bodies.SetAngularVelocity(a_vel);
+/*
+                    var cur_a_vel = bodies.GetAngularVelocity();
+                    if(cur_a_vel > 0){
+                        // +
+                        if(a_vel > 0){
+                            // +
+                        }
+                        else{
+                            // -
+                            //if (cur_a_vel > (Math.abs(a_vel) + Math.abs(a_vel))){
+                                bodies.SetAngularVelocity(cur_a_vel + a_vel);
+                            //}
+                            //else{
+                            //    bodies.SetAngularVelocity(a_vel);
+                            //}
+                        }
+                    }
+                    else{
+                        // -
+                        if(a_vel > 0){
+                            // +
+                            bodies.SetAngularVelocity(cur_a_vel + a_vel);
+                        }
+                        else{
+                            // -
+                        }
+                    }
 
-            var body = obj.GetBody();
-
-            var method = (false) ? 'ApplyForce' : 'ApplyImpulse';
-            var r = body.GetAngle();
-            //try to get speed of the object
-            var force = new b2Vec2(Math.cos( r + (degrees * Math.PI / 180) ), Math.sin( r + (degrees * Math.PI / 180)));
-            body[method](force, body.GetPosition());
+*/
+                    bodies.SetAngularDamping(power);
+                }
+                bodies = bodies.GetNext();
+            }
         }
     }
+    /**
+     *
+     * @param v
+     * @constructor
+     */
     var Shape = function(v) {
         //todo change to some more reliable than rand
-        this.id = Math.round(Math.random() * 1000000);
+        this.id = (typeof v.id != 'undefined') ? v.id : Math.round(Math.random() * 1000000);
         this.x = v.x || Math.random()*23 + 1;
         this.y = v.y || 0;
         this.angle = 0;
         this.color = helpers.randomColor();
         this.center = { x: null, y: null };
         this.isStatic = v.isStatic || false;
-        
+
         this.update = function(options) {
             this.angle = options.angle;
             this.center = options.center;
@@ -506,11 +574,15 @@
             this.y = options.y;
         };
     };
-    
+    /**
+     *
+     * @param options
+     * @constructor
+     */
     var Circle = function(options) {
         Shape.call(this, options);
         this.radius = options.radius || 1;
-        
+
         this.draw = function() {
             ctx.save();
             ctx.translate(this.x * SCALE, this.y * SCALE);
@@ -526,7 +598,11 @@
         };
     };
     Circle.prototype = Shape;
-    
+    /**
+     *
+     * @param options
+     * @constructor
+     */
     var Box = function(options) {
         Shape.call(this, options);
         this.width = options.width || Math.random()*2+0.5;

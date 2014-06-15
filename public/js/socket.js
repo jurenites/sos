@@ -8,7 +8,9 @@ document.addEventListener('DOMContentLoaded',function(){
     socket
 
         .on('message', function (message) {
-            console.log('message:'+message);
+            if(typeof message != 'undefined'){
+                console.log('message:'+message);
+            }
             //socket.emit('my other event', { my: 'data' });
         })
         .on('server_data', function(data){

@@ -22,4 +22,5 @@ canvas#game{
     background-color: #111;
     margin: 0 auto;
     display: block;
+    cursor: crosshair;
 }
