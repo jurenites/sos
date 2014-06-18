@@ -281,6 +281,57 @@
                     shapes[b.GetUserData()].update(box2d.get.bodySpec(b));
                 }
             }
+
+            // track camera by ship
+            var bodies = world.GetBodyList();
+            for(var i = 0; i < world.GetBodyCount(); i++){
+                if (bodies.IsActive() && bodies.GetUserData() == 'ship' && bodies.GetUserData() != null) {
+                    var ship_position = bodies.GetPosition()
+                }
+                bodies = bodies.GetNext();
+            }
+            var left_x = (((canvas.width / SCALE) / canvas.width ) * (canvas.width / 4));
+            var diff_left_x = left_x - ((canvas.width / (canvas.width / SCALE) ) * (ship_position.x - top_left_corner.x) / SCALE);
+            if(diff_left_x > 0){
+                top_left_corner.x = top_left_corner.x - diff_left_x;
+            }
+
+            var diff_right_x = (left_x * 3) - ((canvas.width / (canvas.width / SCALE) ) * (ship_position.x - top_left_corner.x) / SCALE);
+            if(diff_right_x < 0){
+                top_left_corner.x = top_left_corner.x - diff_right_x;
+            }
+
+            var top_y = (((canvas.height / SCALE) / canvas.height ) * (canvas.height / 4));
+            var diff_top_y = top_y - ((canvas.height / (canvas.height / SCALE) ) * (ship_position.y - top_left_corner.y) / SCALE);
+            if(diff_top_y > 0){
+                top_left_corner.y = top_left_corner.y - diff_top_y;
+            }
+
+            var diff_bottom_y = (top_y * 3) - ((canvas.height / (canvas.height / SCALE) ) * (ship_position.y - top_left_corner.y) / SCALE);
+            if(diff_bottom_y < 0){
+                top_left_corner.y = top_left_corner.y - diff_bottom_y;
+            }
+
+            /*
+            var x_position = Math.abs((canvas.width / (canvas.width / SCALE)) * (top_left_corner.x + ship_position.x));
+            if(x_position > e.offsetX){
+                center_x_px = Math.round(e.offsetX + Math.abs(x_position - e.offsetX ) / 2);
+            }
+            else{
+                center_x_px = Math.round(e.offsetX - Math.abs(x_position - e.offsetX ) / 2);
+            }
+            top_left_corner.x = top_left_corner.x - ((canvas.width / SCALE) * ((canvas.width / 2) / canvas.width) - (canvas.width / SCALE) * ((center_x_px) / canvas.width));
+
+            var y_position = Math.abs((canvas.height / (canvas.height / SCALE)) * (top_left_corner.y + ship_position.y));
+            if(y_position > e.offsetY){
+                center_y_px = Math.round(e.offsetY + Math.abs(y_position - e.offsetY ) / 2);
+            }
+            else{
+                center_y_px = Math.round(e.offsetY - Math.abs(y_position - e.offsetY ) / 2);
+            }
+            top_left_corner.y = top_left_corner.y - ((canvas.height / SCALE) * ((canvas.height / 2) / canvas.height) - (canvas.height / SCALE) * ((center_y_px) / canvas.height));
+            */
+
         },
         draw: function() {            
             if (!DEBUG) {
@@ -346,8 +397,6 @@
          * @param e
          */
         mouse_move: function(e) {
-            //mouse_x = (e.clientX - canvasPosition.x) / SCALE;
-            //mouse_y = (e.clientY - canvasPosition.y) / SCALE;
 
             if(e.button == 1){
                 var bodies = world.GetBodyList();
