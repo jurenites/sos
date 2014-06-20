@@ -32,7 +32,7 @@ var MIN_SCALE_SIZE = 0.00000001;
 
 var MAX_SCALE_SIZE = 30;
 
-var SCROLL_SPEED = 50; //in %
+var SCROLL_SPEED = 90; //in %
 
 /**
  * Force of gravity on Earth

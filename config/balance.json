@@ -22,7 +22,8 @@
             "Si": 0.07,
             "Mg": 0.05,
             "S": 0.04
-        }
+        },
+        "color": "#FFE100"
     },
     "planets" : [
         {
@@ -50,7 +51,8 @@
                     "He":6,
                     "K":0.5
                 }
-            }
+            },
+            "color": "#a8a9a4"
         },
         {
             "name": "Venus",
@@ -88,7 +90,8 @@
                     "CO2": 96.5,
                     "N": 3.5
                 }
-            }
+            },
+            "color":"#C1AB7C"
         },
         {
             "name": "Earth",
@@ -129,7 +132,8 @@
                     "Ar": 0.93,
                     "CO2": 0.039
                 }
-            }
+            },
+            "color": "#3673b2"
         },
         {
             "name": "Mars",
@@ -183,7 +187,8 @@
                     "O": 1.146,
                     "CO": 0.0557
                 }
-            }
+            },
+            "color": "#7c442a"
         },
         {
             "name": "Jupiter",
@@ -414,7 +419,8 @@
                     "C2H6": 0.00006,
                     "H2O": 0.00004
                 }
-            }
+            },
+            "color": "#e8a46d"
         },
         {
             "name": "Saturn",
@@ -648,7 +654,8 @@
                 {"name":"Pallene Ring", "from": 211000, "to":213500},
                 {"name":"E Ring", "from": 180000, "to":480000},
                 {"name":"Phoebe Ring", "from": 4000000, "to":13000000}
-            ]
+            ],
+            "color":"#e6a150"
         },
         {
             "name": "Uranus",
@@ -776,7 +783,8 @@
                 {"name":"ε", "from": 51149, "width":19.7},
                 {"name":"ν", "from": 66100, "width":3800},
                 {"name":"μ", "from": 86000, "width":17000}
-            ]
+            ],
+            "color": "#6cc7e0"
         },
         {
             "name": "Neptune",
@@ -853,6 +861,7 @@
                 {"name":"Arago", "from": 57200, "width": 100},
                 {"name":"Adams (N63)", "from": 62932, "width": 30}
             ]
+            ,"color": "#2b689a"
         }
     ],
     "planetoids" : [
@@ -871,7 +880,8 @@
             "rotation_period": -6.387,
             "rotation_velocity": 47.18,
             "min_temperature": -229,
-            "max_temperature": -220
+            "max_temperature": -220,
+            "color":"#3e3f62"
         }
     ],
     "asteroids" : [

@@ -35,6 +35,7 @@
         shapes = {},
         top_left_corner = {},
         pressed = {};
+        server_data = {};
 
     var init = {
         start: function(id) {
@@ -48,7 +49,7 @@
             top_left_corner.x = 0;
             top_left_corner.y = 0;
 
-            setTimeout(function() { add.random(); }, 500);
+            //setTimeout(function() { add.random(); }, 500);
 
             this.callbacks();
 
@@ -75,25 +76,23 @@
              * @param data
              */
             solar_system_objects: function(data){
+                server_data = data;
                 var bodyDef = new b2BodyDef;
                 var fixDef = new b2FixtureDef;
                 //create star
                 if (data.star != undefined) {
-                    new Circle({x:CENTER_SYSTEM_X, y: CENTER_SYSTEM_Y, radius: data.star.radius});
-                    bodyDef.position.Set(CENTER_SYSTEM_X, CENTER_SYSTEM_Y);
+                    add.circle({x:CENTER_SYSTEM_X, y:CENTER_SYSTEM_Y, radius: data.star.radius, color: data.star.color});
                     console.log('add star');
-                    world.CreateBody(bodyDef).CreateFixture(fixDef);
                 }
-
+                //new Circle({x:20,y:20,radius:5});
+                //new Box({height: 2,width: 2, x: -2,y:-2});
                 //create planets
                 if (data.planets != undefined) {
                     for (planetoit_id in data.planets) {
                         //create planets
                         if (data.planets[planetoit_id].perihelion != undefined) {
-                            bodyDef.type = b2Body.b2_staticBody;
-                            fixDef.shape = new b2CircleShape(data.planets[planetoit_id].radius);
-                            bodyDef.position.Set(CENTER_SYSTEM_X  + data.planets[planetoit_id].orbit, CENTER_SYSTEM_Y);
-                            world.CreateBody(bodyDef).CreateFixture(fixDef);
+                            add.circle({id:data.planets[planetoit_id].name, x:CENTER_SYSTEM_X  + data.planets[planetoit_id].orbit,y:CENTER_SYSTEM_Y, radius: 1000*data.planets[planetoit_id].radius, color: data.planets[planetoit_id].color});
+                            console.log('add planet');
                         }
                     }
                 }
@@ -181,7 +180,7 @@
             }
         },
         circle: function(options) {
-            options.radius = 0.5 + Math.random()*1;
+            //options.radius = 0.5 + Math.random()*1;
             var shape = new Circle(options);
             shapes[shape.id] = shape;
             box2d.addToWorld(shape);
@@ -195,6 +194,9 @@
         },
         ship: function(options) {
             options.id = 'ship';
+            options.color = '#FFFFFF';
+            options.width = 2;
+            options.height = 2;
             var shape = new Box(options);
             shapes[shape.id] = shape;
             box2d.addToWorld(shape);
@@ -311,26 +313,34 @@
             if(diff_bottom_y < 0){
                 top_left_corner.y = top_left_corner.y - diff_bottom_y;
             }
+            // move planets
+            var bodies = world.GetBodyList();
+            for(var i = 0; i < world.GetBodyCount(); i++){
 
-            /*
-            var x_position = Math.abs((canvas.width / (canvas.width / SCALE)) * (top_left_corner.x + ship_position.x));
-            if(x_position > e.offsetX){
-                center_x_px = Math.round(e.offsetX + Math.abs(x_position - e.offsetX ) / 2);
-            }
-            else{
-                center_x_px = Math.round(e.offsetX - Math.abs(x_position - e.offsetX ) / 2);
-            }
-            top_left_corner.x = top_left_corner.x - ((canvas.width / SCALE) * ((canvas.width / 2) / canvas.width) - (canvas.width / SCALE) * ((center_x_px) / canvas.width));
+                for (planetoit_id in server_data.planets) {
+                    if (bodies.IsActive() && bodies.GetUserData() == server_data.planets[planetoit_id].name && bodies.GetUserData() != null) {
+                        if (server_data.planets != undefined) {
+                            var planet_position = bodies.GetPosition();
+                            var radian = 0.1;
 
-            var y_position = Math.abs((canvas.height / (canvas.height / SCALE)) * (top_left_corner.y + ship_position.y));
-            if(y_position > e.offsetY){
-                center_y_px = Math.round(e.offsetY + Math.abs(y_position - e.offsetY ) / 2);
+                            if (server_data.planets[planetoit_id].name = 'Earth') {
+                                console.log(server_data.planets[planetoit_id].name);
+                                console.log(CENTER_SYSTEM_Y + server_data.planets[planetoit_id].orbit );
+                                console.log(CENTER_SYSTEM_Y + server_data.planets[planetoit_id].orbit * Math.sin(radian)) ;
+                            }
+                            // shapes[b.GetUserData()].x = CENTER_SYSTEM_X + server_data.planets[planetoit_id].orbit * Math.cos(radian);
+                            // shapes[b.GetUserData()].y = CENTER_SYSTEM_Y + server_data.planets[planetoit_id].orbit * Math.sin(radian);
+
+                            if (server_data.planets[planetoit_id].name = 'Earth') {
+                                console.log( shapes[b.GetUserData()].y );
+                            }
+                        }
+                    }
+                }
+                bodies = bodies.GetNext();
             }
-            else{
-                center_y_px = Math.round(e.offsetY - Math.abs(y_position - e.offsetY ) / 2);
-            }
-            top_left_corner.y = top_left_corner.y - ((canvas.height / SCALE) * ((canvas.height / 2) / canvas.height) - (canvas.height / SCALE) * ((center_y_px) / canvas.height));
-            */
+
+
 
         },
         draw: function() {            
@@ -482,7 +492,7 @@
     /* Shapes down here */
     var user_ship = {
         build : function(x, y, r){
-            var shape = add.ship({x:1,y:1});
+            var shape = add.ship({x:1000000000,y:1000000000});
             return shape;
         },
         /**
@@ -612,7 +622,7 @@
         this.x = v.x || Math.random()*23 + 1;
         this.y = v.y || 0;
         this.angle = 0;
-        this.color = helpers.randomColor();
+        this.color = (typeof v.color != 'undefined') ? v.color : helpers.randomColor();
         this.center = { x: null, y: null };
         this.isStatic = v.isStatic || false;
 
